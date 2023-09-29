@@ -20,39 +20,40 @@ end
 local zeroByte <const> = string.pack("b", 0)
 
 local function calcCheckSum(fileData, puz)
-    local cksum = cksumRegion(fileData, 0x35, puz.width * puz.height * 2, 0)
+    local cksum = cksumRegion(fileData, 0x0f, 8, 0)
+    cksum = cksumRegion(fileData, 0x35, puz.width * puz.height * 2, cksum)
     if #puz.title > 0 then
         cksum = cksumRegion(puz.title, 1, #puz.title, cksum)
+        cksum = cksumRegion(zeroByte, 1, 1, cksum)
     end
-    cksum = cksumRegion(zeroByte, 1, 1, cksum)
 
     if #puz.author > 0 then
         cksum = cksumRegion(puz.author, 1, #puz.author, cksum)
+        cksum = cksumRegion(zeroByte, 1, 1, cksum)
     end
-    cksum = cksumRegion(zeroByte, 1, 1, cksum)
 
     if #puz.copyright > 0 then
         cksum = cksumRegion(puz.copyright, 1, #puz.copyright, cksum)
+        cksum = cksumRegion(zeroByte, 1, 1, cksum)
     end
-    cksum = cksumRegion(zeroByte, 1, 1, cksum)
-
-    if #puz.notes > 0 then
-        cksum = cksumRegion(puz.notes, 1, #puz.notes, cksum)
-    end
-    cksum = cksumRegion(zeroByte, 1, 1, cksum)
 
     for i = 1, puz.numclues do
         cksum = cksumRegion(puz.clues[i], 1, #puz.clues[i], cksum)
     end
 
+    if #puz.notes > 0 then
+        cksum = cksumRegion(puz.notes, 1, #puz.notes, cksum)
+        cksum = cksumRegion(zeroByte, 1, 1, cksum)
+    end
+
     return cksum
 end
 
-local function fromRowCol(row, col)
+function fromRowCol(row, col)
     return row * 1000 + col
 end
 
-local function toRowCol(rowcol)
+function toRowCol(rowcol)
     return rowcol // 1000, rowcol % 1000
 end
 
@@ -164,7 +165,9 @@ function loadPuzzleInfo(name)
     return puz, nil
 end
 
-function getClueNumber(puz, row, col)       -- returns clue number or nil for none
+-- get the clue number for a cell, if any.
+-- returns clue number or nil for none
+function getClueNumber(puz, row, col)
     local rowcol = fromRowCol(row, col)
     for i = 1, #puz.acrossClue do
         if rowcol == puz.acrossClue[i][2] then
@@ -181,6 +184,8 @@ function getClueNumber(puz, row, col)       -- returns clue number or nil for no
     return nil
 end
 
+-- determine if the passed cell needs an across clue number.
+-- return true or false.
 function needsAcrossNumber(puz, row, col)
     return puz.grid[row][col] ~= '.'
             and (col == 1 or puz.grid[row][col - 1] == '.')
@@ -188,6 +193,8 @@ function needsAcrossNumber(puz, row, col)
             and puz.grid[row][col + 1] ~= '.'
 end
 
+-- determine if the passed cell needs a down clue number.
+-- return true or false.
 function needsDownNumber(puz, row, col)
     return puz.grid[row][col] ~= '.'
             and (row == 1 or puz.grid[row - 1][col] == '.')
@@ -195,3 +202,88 @@ function needsDownNumber(puz, row, col)
             and puz.grid[row + 1][col] ~= '.'
 end
 
+-- find the start and end cell for an across word.  returns two
+-- rowcol integers representing the bounds of the word.  returns
+-- nil if the passed cell is not part of an across word.
+function findAcrossWord(puz, row, col)
+    local startRowCol, endRowCol = nil, nil
+    if puz.solution[row][col] == '.' then
+        return startRowCol, endRowCol
+    end
+
+    if needsAcrossNumber(puz, row, col) then
+        startRowCol = fromRowCol(row, col)
+    else
+        local c = col
+        while true do
+            c -= 1
+            if needsAcrossNumber(puz, row, c) then
+                startRowCol = fromRowCol(row, c)
+                break
+            end
+
+            if c == 1 or puz.solution[row][c] == '.' then
+                break
+            end
+        end
+    end
+
+    if startRowCol then
+        for c = col, puz.width + 1 do
+            if puz.solution[row][c] == '.' then
+                endRowCol = fromRowCol(row, c - 1)
+                break
+            end
+
+            if c == puz.width then
+                endRowCol = fromRowCol(row, c)
+                break
+            end
+        end
+    end
+
+    return startRowCol, endRowCol
+end
+
+-- find the start and end cell for a down word.  returns two
+-- rowcol integers representing the bounds of the word.  returns
+-- nil if the passed cell is not part of a down word.
+function findDownWord(puz, row, col)
+    local startRowCol, endRowCol = nil, nil
+    if puz.solution[row][col] == '.' then
+        return startRowCol, endRowCol
+    end
+
+    if needsDownNumber(puz, row, col) then
+        startRowCol = fromRowCol(row, col)
+    else
+        local r = row
+        while true do
+            r -= 1
+            if needsDownNumber(puz, r, col) then
+                startRowCol = fromRowCol(r, col)
+                break
+            end
+
+            if r == 1 or puz.solution[r][col] == '.' then
+                break
+            end
+        end
+    end
+
+    if startRowCol then
+        for r = row, puz.height + 1 do
+            if puz.solution[r][col] == '.' then
+                endRowCol = fromRowCol(r - 1, col)
+                break
+            end
+
+            if r == puz.height then
+                endRowCol = fromRowCol(r, col)
+                break
+            end
+        end
+    end
+
+    return startRowCol, endRowCol
+end
