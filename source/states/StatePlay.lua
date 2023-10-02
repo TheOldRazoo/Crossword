@@ -6,7 +6,7 @@ class('StatePlay').extends(State)
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local letters <const> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+local letters <const> = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 function StatePlay:init()
     StatePlay.super.init(self)
@@ -53,12 +53,7 @@ function StatePlay:update()
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
             self.curRow, self.curCol, self.across =
                     findPrevWord(self.puz, self.curRow, self.curCol, self.across)
-            local startRowCol, endRowCol
-            if self.across then
-                startRowCol, endRowCol = findAcrossWord(self.puz, self.curRow, self.curCol)
-            else
-                startRowCol, endRowCol = findDownWord(self.puz, self.curRow, self.curCol)
-            end
+            local startRowCol, endRowCol findWord(self.puz, self.curRow, self.curCol, self.across)
             self.curRow, self.curCol = toRowCol(endRowCol)
         end
         self:displayCurrentCell(true)

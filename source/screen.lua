@@ -102,13 +102,7 @@ end
 ---@param across true if across word, false if down word
 ---@return rect bounding the word cells
 function wordBoundingRect(puz, row, col, across)
-    local startRowCol, endRowCol
-    if across then
-        startRowCol, endRowCol = findAcrossWord(puz, row, col)
-    else
-        startRowCol, endRowCol = findDownWord(puz, row, col)
-    end
-
+    local startRowCol, endRowCol = findWord(puz, row, col, across)
     if not startRowCol then
         return nil
     end
@@ -125,12 +119,7 @@ function wordBoundingRect(puz, row, col, across)
 end
 
 function scrollToWord(puz, row, col, across)
-    local startRowCol, endRowCol
-    if across then
-        startRowCol, endRowCol = findAcrossWord(puz, row, col)
-    else
-        startRowCol, endRowCol = findDownWord(puz, row, col)
-    end
+    local startRowCol, endRowCol = findWord(puz, row, col, across)
 
     if startRowCol then
         if willWordFitOnScreen(startRowCol, endRowCol) then
@@ -182,12 +171,7 @@ end
 function displayClue(puz, row, col, across)
     local clue = nil
     local dir = nil
-    local startRowCol
-    if across then
-        startRowCol = findAcrossWord(puz, row, col)
-    else
-        startRowCol = findDownWord(puz, row, col)
-    end
+    local startRowCol = findWord(puz, row, col, across)
     local clueNum = getClueNumber(puz, toRowCol(startRowCol))
     if across and needsAcrossNumber(puz, toRowCol(startRowCol)) then
         clue = puz.clues[puz.acrossClue[clueNum][3]]

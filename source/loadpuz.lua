@@ -202,6 +202,17 @@ function needsDownNumber(puz, row, col)
             and puz.grid[row + 1][col] ~= '.'
 end
 
+function findWord(puz, row, col, across)
+local startRowCol, endRowCol
+    if across then
+        startRowCol, endRowCol = findAcrossWord(puz, row, col)
+    else
+        startRowCol, endRowCol = findDownWord(puz, row, col)
+    end
+
+    return startRowCol, endRowCol
+end
+
 -- find the start and end cell for an across word.  returns two
 -- rowcol integers representing the bounds of the word.  returns
 -- nil if the passed cell is not part of an across word.
