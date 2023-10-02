@@ -1,26 +1,27 @@
 
+import 'CoreLibs/sprites'
+import 'CoreLibs/graphics'
+import 'Utility/State'
+import 'Utility/StateManager'
 import 'loadpuz'
 import 'screen'
 import 'utility'
+import 'states/StateStart'
+import 'states/StatePlay'
+import 'states/StatePuz'
 
 local firstTime = true
-local puz
+
+stateStart = StateStart()
+statePuz = StatePuz()
+statePlay = StatePlay()
+stateManager = StateManager(stateStart)
 
 function playdate.update()
     if firstTime then
-        local err
-        puz, err = loadPuzzleFile('puz/uc230921.puz')
-        puz.grid[1][1] = 'A'
-        puz.grid[1][2] = 'B'
-        puz.grid[2][1] = 'C'
-        displayTitle(puz)
-        drawBoard(puz)
-        displayBoard()
-        displayClue(puz, 1, 1, true)
         firstTime = false
     end
 
-    if playdate.buttonJustPressed(playdate.kButtonA) then
-        scrollToWord(puz, 10, 10, false)
-    end
+    playdate.graphics.sprite.update()
+    stateManager:getCurrentState():update()
 end

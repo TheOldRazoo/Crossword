@@ -287,3 +287,71 @@ function findDownWord(puz, row, col)
 
     return startRowCol, endRowCol
 end
+
+function isLetterCell(puz, row, col)
+    if row > puz.height or row < 1 or col > puz.width or col < 1 then
+        return false
+    end
+
+    return puz.grid[row][col] ~= '.'
+end
+
+function findNextWord(puz, row, col, across)
+    if col > puz.width or col < 1 then
+        col = 1
+        row += 1
+    end
+    if row > puz.height or row < 1 then
+        row = 1
+    end
+
+    while true do
+        if across and needsAcrossNumber(puz, row, col) then
+            return row, col, across
+        end
+
+        if not across and needsDownNumber(puz, row, col) then
+            return row, col, across
+        end
+
+        col += 1
+        if col > puz.width then
+            col = 1
+            row += 1
+            if row > puz.height then
+                across = not across
+                row = 1
+            end
+        end
+    end
+end
+
+function findPrevWord(puz, row, col, across)
+    if col > puz.width or col < 1 then
+        col = puz.width
+        row -= 1
+    end
+    if row > puz.height or row < 1 then
+        row = puz.height
+    end
+
+    while true do
+        if across and needsAcrossNumber(puz, row, col) then
+            return row, col, across
+        end
+
+        if not across and needsDownNumber(puz, row, col) then
+            return row, col, across
+        end
+
+        col -= 1
+        if col < 1 then
+            col = puz.width
+            row -= 1
+            if row < 1 then
+                across = not across
+                row = puz.height
+            end
+        end
+    end
+end

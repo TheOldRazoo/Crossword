@@ -8,30 +8,59 @@ local borderWidth <const> = 1
 
 local boardClipRect <const> = pd.geometry.rect.new(0, 16, pd.display.getWidth(), 202)
 local boardOrigin <const> = pd.geometry.point.new(boardClipRect.x, boardClipRect.y)
-local curBoardOrigin = boardOrigin
 
 local boardImage = nil
 
-local function drawCell(puz, row, col)
-    gfx.lockFocus(boardImage)
-    local lineWidth = gfx.getLineWidth()
-    gfx.setLineWidth(borderWidth)
+local function resetBoardOrigin()
+    boardOrigin.x = boardClipRect.x
+    boardOrigin.y = boardClipRect.y
+end
 
+local function adjustBoardOrigin()
+    if boardOrigin.x > boardClipRect.x then
+        boardOrigin.x = boardClipRect.x
+    end
+    if boardOrigin.y > boardClipRect.y then
+        boardOrigin.y = boardClipRect.y
+    end
+end
+
+function drawCell(puz, row, col)
     local x, y = (col - 1) * cellWidth, (row - 1) * cellHeight
+    local cell = getCellImage(puz, row, col)
+    gfx.lockFocus(boardImage)
+    cell:draw(x, y)
+    gfx.unlockFocus()
+end
+
+function getCellImage(puz, row, col)
+    local cellImg = gfx.image.new(cellWidth, cellHeight, gfx.getBackgroundColor())
+    gfx.lockFocus(cellImg)
     if puz.grid[row][col] == '.' then
-        gfx.fillRect(x, y, cellWidth, cellHeight)
+        gfx.fillRect(0, 0, cellWidth, cellHeight)
     else
-        gfx.drawRect(x, y, cellWidth, cellHeight)
+        gfx.drawRect(0, 0, cellWidth, cellHeight)
         local clueNum = getClueNumber(puz, row, col)
         if clueNum then
-            getTinyFont():drawText(tostring(clueNum), x + borderWidth + 2, y + borderWidth + 2)
+            getTinyFont():drawText(tostring(clueNum), borderWidth + 2, borderWidth + 2)
         end
 
-        getLetterFont():drawText(puz.grid[row][col], x + borderWidth + 8, y + borderWidth + 6)
+        getLetterFont():drawTextAligned(puz.grid[row][col],
+            cellWidth // 2, borderWidth + 6, kTextAlignment.center)
     end
 
-    gfx.setLineWidth(lineWidth)
     gfx.unlockFocus()
+    return cellImg
+end
+
+function getWordImage(rect)
+    local wordImg = gfx.image.new(rect.width, rect.height)
+    gfx.lockFocus(wordImg)
+    gfx.drawRect(0, 0, rect.width, rect.height)
+    gfx.drawRect(1, 1, rect.width - 2, rect.height - 2)
+    gfx.drawRect(2, 2, rect.width - 4, rect.height - 4)
+    gfx.unlockFocus()
+    return wordImg
 end
 
 function clearBoardScreen()
@@ -42,6 +71,7 @@ function clearBoardScreen()
 end
 
 function drawBoard(puz)
+    resetBoardOrigin()
     if boardImage == nil then
         boardImage = gfx.image.new(puz.width * cellWidth, puz.height * cellHeight)
     end
@@ -56,8 +86,42 @@ end
 function displayBoard()
     gfx.setScreenClipRect(boardClipRect)
     clearBoardScreen()
-    boardImage:draw(curBoardOrigin)
+    boardImage:draw(boardOrigin)
     gfx.clearClipRect()
+end
+
+function getScreenCoord(row, col)
+    local x = ((col - 1) * cellWidth) + boardOrigin.x
+    local y = ((row - 1) * cellHeight) + boardOrigin.y
+    return x, y
+end
+
+---@param puz the current puzzle
+---@param row the current cell row
+---@param col the current cell col
+---@param across true if across word, false if down word
+---@return rect bounding the word cells
+function wordBoundingRect(puz, row, col, across)
+    local startRowCol, endRowCol
+    if across then
+        startRowCol, endRowCol = findAcrossWord(puz, row, col)
+    else
+        startRowCol, endRowCol = findDownWord(puz, row, col)
+    end
+
+    if not startRowCol then
+        return nil
+    end
+
+    local startX, startY = toRowCol(startRowCol)
+    local endX, endY = toRowCol(endRowCol)
+    startX, startY = getScreenCoord(startX, startY)
+    endX, endY = getScreenCoord(endX, endY)
+    endX += cellWidth
+    endY += cellHeight
+
+    local rect = pd.geometry.rect.new(startX, startY, endX - startX, endY - startY)
+    return rect
 end
 
 function scrollToWord(puz, row, col, across)
@@ -84,20 +148,21 @@ function scrollToCell(rowcol)
     local y, x = toRowCol(rowcol)
     x = (x - 1) * cellWidth
     y = (y - 1) * cellHeight
-    local curX = x + curBoardOrigin.x
-    local curY = y + curBoardOrigin.y
+    local curX = x + boardOrigin.x
+    local curY = y + boardOrigin.y
     if curX < boardClipRect.x then
-        curBoardOrigin.x = curBoardOrigin.x - curX
+        boardOrigin.x = boardOrigin.x - curX
     end
-    if curX + curBoardOrigin.x + cellWidth > boardClipRect.width then
-        curBoardOrigin.x = curBoardOrigin.x - (curX + cellWidth - boardClipRect.width)
+    if curX + boardOrigin.x + cellWidth > boardClipRect.width then
+        boardOrigin.x = boardOrigin.x - (curX + cellWidth - boardClipRect.width)
     end
     if curY < boardClipRect.y then
-        curBoardOrigin.y = curBoardOrigin.y - curY
+        boardOrigin.y = boardOrigin.y - curY
     end
-    if curY + curBoardOrigin.y + cellHeight > boardClipRect.height then
-        curBoardOrigin.y = curBoardOrigin.y - (curY + cellHeight - boardClipRect.height)
+    if curY + boardOrigin.y + cellHeight > boardClipRect.height then
+        boardOrigin.y = boardOrigin.y - (curY + cellHeight - boardClipRect.height)
     end
+    adjustBoardOrigin()
 end
 
 function willWordFitOnScreen(startRowCol, endRowCol)
@@ -115,18 +180,28 @@ end
 
 -- across is true for across clue.  otherwise use down clue
 function displayClue(puz, row, col, across)
-    local clueNum = getClueNumber(puz, row, col)
     local clue = nil
     local dir = nil
-    if across and needsAcrossNumber(puz, row, col) then
+    local startRowCol
+    if across then
+        startRowCol = findAcrossWord(puz, row, col)
+    else
+        startRowCol = findDownWord(puz, row, col)
+    end
+    local clueNum = getClueNumber(puz, toRowCol(startRowCol))
+    if across and needsAcrossNumber(puz, toRowCol(startRowCol)) then
         clue = puz.clues[puz.acrossClue[clueNum][3]]
-        dir = 'A'
-    elseif not across and needsDownNumber(puz, row, col) then
+        dir = 'a'
+    elseif not across and needsDownNumber(puz, toRowCol(startRowCol)) then
         clue = puz.clues[puz.downClues[clueNum][3]]
-        dir = 'D'
+        dir = 'd'
     end
 
     if clue then
+        local color = gfx.getColor()
+        gfx.setColor(gfx.getBackgroundColor())
+        gfx.fillRect(1, 224, 400, 240)
+        gfx.setColor(color)
         clue = clueNum .. dir .. '. ' .. clue
         getClueFont():drawText(clue, 1, 224)
     end
