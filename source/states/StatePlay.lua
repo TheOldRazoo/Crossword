@@ -26,15 +26,29 @@ function StatePlay:enter(prevState)
     self:displayCurrentCell(true)
 end
 
+local ignoreB = false
 function StatePlay:update()
-    if pd.buttonJustPressed(pd.kButtonA) then
-        self.curLetter = (self.curLetter % #letters) + 1
+    if pd.buttonJustReleased(pd.kButtonA) then
+        if pd.getButtonState() & pd.kButtonB > 0 then
+            ignoreB = true
+            self.curLetter -= 1
+            if self.curLetter < 1 then
+                self.curLetter = #letters
+            end
+        else
+            self.curLetter = (self.curLetter % #letters) + 1
+            ignoreB = false
+        end
         self.puz.grid[self.curRow][self.curCol] = string.sub(letters, self.curLetter, self.curLetter)
         self:displayCurrentCell(false)
-    elseif pd.buttonJustPressed(pd.kButtonB) then
-        self.across = not self.across
-        self:displayCurrentCell(true)
-    elseif pd.buttonJustPressed(pd.kButtonRight) then
+    elseif pd.buttonJustReleased(pd.kButtonB) then
+        if ignoreB then
+            ignoreB = false
+        else
+            self.across = not self.across
+            self:displayCurrentCell(true)
+        end
+    elseif pd.buttonJustReleased(pd.kButtonRight) then
         drawCell(self.puz, self.curRow, self.curCol)
         self.curCol += 1
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
@@ -43,7 +57,7 @@ function StatePlay:update()
         end
         self:displayCurrentCell(true)
         self:setCurLetter()
-    elseif pd.buttonJustPressed(pd.kButtonLeft) then
+    elseif pd.buttonJustReleased(pd.kButtonLeft) then
         drawCell(self.puz, self.curRow, self.curCol)
         self.curCol -= 1
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
@@ -54,7 +68,7 @@ function StatePlay:update()
         end
         self:displayCurrentCell(true)
         self:setCurLetter()
-    elseif pd.buttonJustPressed(pd.kButtonDown) then
+    elseif pd.buttonJustReleased(pd.kButtonDown) then
         drawCell(self.puz, self.curRow, self.curCol)
         self.curRow += 1
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
@@ -63,7 +77,7 @@ function StatePlay:update()
         end
         self:displayCurrentCell(true)
         self:setCurLetter()
-    elseif pd.buttonJustPressed(pd.kButtonUp) then
+    elseif pd.buttonJustReleased(pd.kButtonUp) then
         drawCell(self.puz, self.curRow, self.curCol)
         self.curRow -= 1
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
