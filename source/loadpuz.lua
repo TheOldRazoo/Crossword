@@ -184,6 +184,26 @@ function getClueNumber(puz, row, col)
     return nil
 end
 
+function getAcrossClue(puz, rowcol)
+    for i = 1, #puz.acrossClue do
+        if puz.acrossClue[i][2] == rowcol then
+            return puz.clues[puz.acrossClue[i][3]]
+        end
+    end
+
+    return ' '
+end
+
+function getDownClue(puz, rowcol)
+    for i = 1, #puz.downClue do
+        if puz.downClue[i][2] == rowcol then
+            return puz.clues[puz.downClue[i][3]]
+        end
+    end
+
+    return ' '
+end
+
 -- determine if the passed cell needs an across clue number.
 -- return true or false.
 function needsAcrossNumber(puz, row, col)
@@ -314,6 +334,7 @@ function findNextWord(puz, row, col, across)
     end
     if row > puz.height or row < 1 then
         row = 1
+        across = not across
     end
 
     while true do
@@ -344,6 +365,7 @@ function findPrevWord(puz, row, col, across)
     end
     if row > puz.height or row < 1 then
         row = puz.height
+        across = not across
     end
 
     while true do

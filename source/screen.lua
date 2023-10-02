@@ -7,22 +7,13 @@ local cellHeight <const> = 28
 local borderWidth <const> = 1
 
 local boardClipRect <const> = pd.geometry.rect.new(0, 16, pd.display.getWidth(), 202)
-local boardOrigin <const> = pd.geometry.point.new(boardClipRect.x, boardClipRect.y)
+local boardOrigin <const> =  { x = boardClipRect.x, y = boardClipRect.y }
 
 local boardImage = nil
 
 local function resetBoardOrigin()
     boardOrigin.x = boardClipRect.x
     boardOrigin.y = boardClipRect.y
-end
-
-local function adjustBoardOrigin()
-    if boardOrigin.x > boardClipRect.x then
-        boardOrigin.x = boardClipRect.x
-    end
-    if boardOrigin.y > boardClipRect.y then
-        boardOrigin.y = boardClipRect.y
-    end
 end
 
 function drawCell(puz, row, col)
@@ -86,7 +77,7 @@ end
 function displayBoard()
     gfx.setScreenClipRect(boardClipRect)
     clearBoardScreen()
-    boardImage:draw(boardOrigin)
+    boardImage:draw(boardOrigin.x, boardOrigin.y)
     gfx.clearClipRect()
 end
 
@@ -140,18 +131,17 @@ function scrollToCell(rowcol)
     local curX = x + boardOrigin.x
     local curY = y + boardOrigin.y
     if curX < boardClipRect.x then
-        boardOrigin.x = boardOrigin.x - curX
+        boardOrigin.x = boardOrigin.x - curX + boardClipRect.x
     end
     if curX + boardOrigin.x + cellWidth > boardClipRect.width then
         boardOrigin.x = boardOrigin.x - (curX + cellWidth - boardClipRect.width)
     end
     if curY < boardClipRect.y then
-        boardOrigin.y = boardOrigin.y - curY
+        boardOrigin.y = boardOrigin.y - curY + boardClipRect.y
     end
-    if curY + boardOrigin.y + cellHeight > boardClipRect.height then
+    if curY + boardOrigin.y + cellHeight > boardClipRect.height + boardOrigin.y then
         boardOrigin.y = boardOrigin.y - (curY + cellHeight - boardClipRect.height)
     end
-    adjustBoardOrigin()
 end
 
 function willWordFitOnScreen(startRowCol, endRowCol)
@@ -174,10 +164,10 @@ function displayClue(puz, row, col, across)
     local startRowCol = findWord(puz, row, col, across)
     local clueNum = getClueNumber(puz, toRowCol(startRowCol))
     if across and needsAcrossNumber(puz, toRowCol(startRowCol)) then
-        clue = puz.clues[puz.acrossClue[clueNum][3]]
+        clue = getAcrossClue(puz, startRowCol)
         dir = 'a'
     elseif not across and needsDownNumber(puz, toRowCol(startRowCol)) then
-        clue = puz.clues[puz.downClues[clueNum][3]]
+        clue = getDownClue(puz, startRowCol)
         dir = 'd'
     end
 

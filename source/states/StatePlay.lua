@@ -32,12 +32,8 @@ function StatePlay:update()
         self.puz.grid[self.curRow][self.curCol] = string.sub(letters, self.curLetter, self.curLetter)
         self:displayCurrentCell(false)
     elseif pd.buttonJustPressed(pd.kButtonB) then
-        self.curLetter -= 1
-        if self.curLetter < 1 then
-            self.curLetter = #letters
-        end
-        self.puz.grid[self.curRow][self.curCol] = string.sub(letters, self.curLetter, self.curLetter)
-        self:displayCurrentCell(false)
+        self.across = not self.across
+        self:displayCurrentCell(true)
     elseif pd.buttonJustPressed(pd.kButtonRight) then
         drawCell(self.puz, self.curRow, self.curCol)
         self.curCol += 1
@@ -53,7 +49,7 @@ function StatePlay:update()
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
             self.curRow, self.curCol, self.across =
                     findPrevWord(self.puz, self.curRow, self.curCol, self.across)
-            local startRowCol, endRowCol findWord(self.puz, self.curRow, self.curCol, self.across)
+            local startRowCol, endRowCol = findWord(self.puz, self.curRow, self.curCol, self.across)
             self.curRow, self.curCol = toRowCol(endRowCol)
         end
         self:displayCurrentCell(true)
@@ -83,11 +79,11 @@ end
 function StatePlay:displayCurrentWord()
     local wordRect = wordBoundingRect(self.puz, self.curRow, self.curCol, self.across)
     local wordImg = getWordImage(wordRect)
-    scrollToWord(self.puz, self.curRow, self.curCol, self.across)
     wordImg:draw(wordRect.x, wordRect.y)
 end
 
 function StatePlay:displayCurrentCell(redraw)
+    scrollToWord(self.puz, self.curRow, self.curCol, self.across)
     if redraw then
         displayBoard()
         displayClue(self.puz, self.curRow, self.curCol, self.across)
@@ -95,7 +91,7 @@ function StatePlay:displayCurrentCell(redraw)
     end
 
     local img = getCellImage(self.puz, self.curRow, self.curCol):invertedImage()
-    -- img = img:blurredImage(2, 3, gfx.image.kDitherTypeAtkinson, false)
+    -- img = img:blurredImage(1, 1, gfx.image.kDitherTypeBayer2x2, false)
     img:draw(getScreenCoord(self.curRow, self.curCol))
 end
 
