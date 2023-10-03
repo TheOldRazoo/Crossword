@@ -32,6 +32,7 @@ function StatePuz:init()
 end
 
 function StatePuz:enter(prevState)
+    initScreen()
     clearScreen()
     puzFiles = self:listPuzzleFiles()
     gridView:setNumberOfRows(#puzFiles)
@@ -49,7 +50,14 @@ function StatePuz:update()
         displayPuzzleInfo(selectedRow())
     elseif pd.buttonJustReleased(pd.kButtonA) then
         local row = selectedRow()
-        selectedFilename = puzFiles[row]
+        local puz, err = loadPuzzleFile(puzFiles[row])
+        if puz then
+            restorePuzzle(puz)
+            statePlay:setPuzzle(puz)
+            stateManager:setCurrentState(statePlay)
+        else
+            font:drawText(err, puzzleInfoX, 220)
+        end
     elseif pd.buttonJustReleased(pd.kButtonB) then
     end
 
