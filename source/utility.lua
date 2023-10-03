@@ -18,6 +18,10 @@ function getClueFont()
     return clueFont
 end
 
+function clearScreen()
+    gfx.clear(gfx.getBackgroundColor())
+end
+
 function getBaseFileName(name)
     local first, last = 1, 0
     local slash = 1
@@ -36,4 +40,35 @@ function getBaseFileName(name)
     end
 
     return name
+end
+
+function wrapText(text, font, width)
+    local line = ''
+    local lines = {}
+    local pos = 0
+    while pos do
+        local word
+        pos += 1
+        local startPos, endPos = string.find(text, ' +', pos)
+        if startPos then
+            word = string.sub(text, pos, endPos)
+        else
+            word = string.sub(text, pos)
+        end
+
+        if font:getTextWidth(line .. word .. ' ') < width then
+            line = line .. word .. ' '
+        else
+            table.insert(lines, line)
+            line = ''
+        end
+
+        pos = endPos
+    end
+
+    if #line > 0 then
+        table.insert(lines, line)
+    end
+
+    return lines
 end

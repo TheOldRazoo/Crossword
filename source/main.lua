@@ -16,7 +16,7 @@ statePlay = StatePlay()
 stateManager = StateManager(stateStart)
 
 function playdate.update()
-    -- playdate.graphics.sprite.update()
+    playdate.timer.updateTimers()
     stateManager:getCurrentState():update()
 end
 

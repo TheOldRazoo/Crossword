@@ -16,6 +16,11 @@ local function resetBoardOrigin()
     boardOrigin.y = boardClipRect.y
 end
 
+function initScreen()
+    boardImage = nil
+    resetBoardOrigin()
+end
+
 function drawCell(puz, row, col)
     local x, y = (col - 1) * cellWidth, (row - 1) * cellHeight
     local cell = getCellImage(puz, row, col)

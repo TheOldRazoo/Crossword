@@ -15,6 +15,7 @@ function StatePlay:init()
     self.curCol = 1
     self.curLetter = 1
     self.across = true
+    initScreen()
 end
 
 function StatePlay:enter(prevState)
@@ -146,13 +147,18 @@ function StatePlay:checkForErrors()
         end
     end
 
-    local msg = errors .. ' error'
-    if errors ~= 1 then
-        msg = msg .. 's'
-    end
-    msg = msg .. ' and ' .. blanks .. ' blank space'
-    if blanks ~= 1 then
-        msg = msg .. 's'
+    local msg
+    if errors == 0 and blanks == 0 then
+        msg = 'Puzzle complete.  Congratulations!'
+    else
+        msg = errors .. ' error'
+        if errors ~= 1 then
+            msg = msg .. 's'
+        end
+        msg = msg .. ' and ' .. blanks .. ' blank space'
+        if blanks ~= 1 then
+            msg = msg .. 's'
+        end
     end
     displayMessage(msg)
 end
