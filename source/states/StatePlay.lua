@@ -18,12 +18,21 @@ function StatePlay:init()
 end
 
 function StatePlay:enter(prevState)
+    local menu = pd.getSystemMenu()
+    menu:addMenuItem('check errors', function() self:checkForErrors() end)
+    menu:addMenuItem('clear errors', function() self:removeErrors() end)
+    menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
     gfx.clear()
     displayTitle(self.puz)
     drawBoard(self.puz)
     displayBoard()
     displayClue(self.puz, 1, 1, true)
     self:displayCurrentCell(true)
+end
+
+function StatePlay:exit()
+    pd.getSystemMenu():removeAllMenuItems()
+    self:savePuzzle()
 end
 
 local ignoreB = false
@@ -105,7 +114,13 @@ function StatePlay:displayCurrentCell(redraw)
     end
 
     local img = getCellImage(self.puz, self.curRow, self.curCol):invertedImage()
-    -- img = img:blurredImage(1, 1, gfx.image.kDitherTypeBayer2x2, false)
+    gfx.lockFocus(img)
+    local color = gfx.getColor()
+    gfx.setColor(gfx.getBackgroundColor())
+    local w, h = img:getSize()
+    gfx.drawRect(3, 3, w - 6, h - 6)
+    gfx.setColor(color)
+    gfx.unlockFocus()
     img:draw(getScreenCoord(self.curRow, self.curCol))
 end
 
@@ -116,6 +131,51 @@ function StatePlay:setCurLetter()
     else
         self.curLetter = 1
     end
+end
+
+function StatePlay:checkForErrors()
+    local errors, blanks = 0, 0
+    local puz = self.puz
+    for row = 1, puz.width do
+        for col = 1, puz.height do
+            if puz.grid[row][col] == " " then
+                blanks += 1
+            elseif puz.grid[row][col] ~= puz.solution[row][col] then
+                errors += 1
+            end
+        end
+    end
+
+    local msg = errors .. ' error'
+    if errors ~= 1 then
+        msg = msg .. 's'
+    end
+    msg = msg .. ' and ' .. blanks .. ' blank space'
+    if blanks ~= 1 then
+        msg = msg .. 's'
+    end
+    displayMessage(msg)
+end
+
+function StatePlay:removeErrors()
+    local puz = self.puz
+    for row = 1, puz.width do
+        for col = 1, puz.height do
+            if puz.grid[row][col] ~= puz.solution[row][col] then
+                puz.grid[row][col] = ' '
+            end
+        end
+    end
+    drawBoard(puz)
+    self:displayCurrentCell(true)
+end
+
+function StatePlay:exitPuzzle()
+    stateManager:setCurrentState(statePuz)
+end
+
+function StatePlay:savePuzzle()
+    savePuzzle(self.puz)
 end
 
 function StatePlay:setPuzzle(puz)

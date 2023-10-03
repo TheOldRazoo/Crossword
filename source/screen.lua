@@ -157,6 +157,14 @@ function willWordFitOnScreen(startRowCol, endRowCol)
     return wordSize < boardClipRect.height
 end
 
+function displayMessage(msg)
+    local color = gfx.getColor()
+    gfx.setColor(gfx.getBackgroundColor())
+    gfx.fillRect(1, 224, 400, 240)
+    gfx.setColor(color)
+    getClueFont():drawText(msg, 1, 224)
+end
+
 -- across is true for across clue.  otherwise use down clue
 function displayClue(puz, row, col, across)
     local clue = nil

@@ -66,6 +66,7 @@ function loadPuzzleFile(name)
     local fileSize = pdfile.getSize(name)
     local fileData = file:read(fileSize)
     local puz = {}
+    puz.name = name
     puz.chksum = string.unpack("<I2", fileData, 1)
     puz.version = string.unpack("z", fileData, 25)
     puz.width = string.unpack("I1", fileData, 45)
@@ -386,5 +387,16 @@ function findPrevWord(puz, row, col, across)
                 row = puz.height
             end
         end
+    end
+end
+
+function savePuzzle(puz)
+    pd.datastore.write(puz.grid, 'saves/' .. getBaseFileName(puz.name))
+end
+
+function restorePuzzle(puz)
+    local data = pd.datastore.read('saves/' .. getBaseFileName(puz.name))
+    if data then
+        puz.grid = data
     end
 end
