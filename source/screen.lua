@@ -11,9 +11,24 @@ local boardOrigin <const> =  { x = boardClipRect.x, y = boardClipRect.y }
 
 local boardImage = nil
 
+local clueTimerData = { currentPos = 1, endPos = 1, incr = getClueFont():getTextWidth('A'), msg = "" }
+local clueScrollTimer = nil
+
 local function resetBoardOrigin()
     boardOrigin.x = boardClipRect.x
     boardOrigin.y = boardClipRect.y
+end
+
+local function clueTimer(timerData)
+    if timerData.currentPos > 1 then
+        displayMessage(timerData.msg, 1)
+    else
+        displayMessage(timerData.msg, timerData.currentPos)
+    end
+    timerData.currentPos -= timerData.incr
+    if timerData.currentPos < timerData.endPos then
+        timerData.currentPos = 50
+    end
 end
 
 function initScreen()
@@ -162,12 +177,32 @@ function willWordFitOnScreen(startRowCol, endRowCol)
     return wordSize < boardClipRect.height
 end
 
-function displayMessage(msg)
+function displayMessage(msg, msgPos)
+    if msgPos == nil then
+        msgPos = 1
+        local msgLen = getClueFont():getTextWidth(msg)
+        if msgLen > 399 then
+            clueTimerData.currentPos = 1
+            clueTimerData.endPos = 380 - msgLen
+            clueTimerData.msg = msg
+            if clueScrollTimer == nil then
+                clueScrollTimer = pd.timer.keyRepeatTimerWithDelay(150, 150, clueTimer, clueTimerData)
+            else
+                clueScrollTimer:reset()
+                clueScrollTimer:start()
+            end
+        else
+            if clueScrollTimer then
+                clueScrollTimer:pause()
+            end
+        end
+    end
+
     local color = gfx.getColor()
     gfx.setColor(gfx.getBackgroundColor())
-    gfx.fillRect(1, 224, 400, 240)
+    gfx.fillRect(0, 224, 400, 240)
     gfx.setColor(color)
-    getClueFont():drawText(msg, 1, 224)
+    getClueFont():drawText(msg, msgPos, 224)
 end
 
 -- across is true for across clue.  otherwise use down clue
@@ -185,12 +220,8 @@ function displayClue(puz, row, col, across)
     end
 
     if clue then
-        local color = gfx.getColor()
-        gfx.setColor(gfx.getBackgroundColor())
-        gfx.fillRect(1, 224, 400, 240)
-        gfx.setColor(color)
         clue = clueNum .. dir .. '. ' .. clue
-        getClueFont():drawText(clue, 1, 224)
+        displayMessage(clue)
     end
 end
 
