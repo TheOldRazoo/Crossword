@@ -11,11 +11,6 @@ local letters <const> = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 function StatePlay:init()
     StatePlay.super.init(self)
     self.puz = nil
-    self.curRow = 1
-    self.curCol = 1
-    self.curLetter = 1
-    self.across = true
-    initScreen()
 end
 
 function StatePlay:enter(prevState)
@@ -23,6 +18,11 @@ function StatePlay:enter(prevState)
     menu:addMenuItem('check errors', function() self:checkForErrors() end)
     menu:addMenuItem('clear errors', function() self:removeErrors() end)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
+    self.curRow = 1
+    self.curCol = 1
+    self.curLetter = 1
+    self.across = true
+    initScreen()
     gfx.clear()
     displayTitle(self.puz)
     drawBoard(self.puz)
@@ -80,7 +80,20 @@ function StatePlay:update()
         self:setCurLetter()
     elseif pd.buttonJustReleased(pd.kButtonDown) then
         drawCell(self.puz, self.curRow, self.curCol)
-        self.curRow += 1
+        local row = self.curRow + 1
+        while not isLetterCell(self.puz, row, self.curCol) do
+            if row == self.curRow then
+                row += 1
+                break
+            end
+
+            row += 1
+            if row > self.puz.height then
+                row = 1
+            end
+        end
+
+        self.curRow = row
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
             self.curRow, self.curCol, self.across =
                 findNextWord(self.puz, self.curRow, self.curCol, self.across)
@@ -89,11 +102,23 @@ function StatePlay:update()
         self:setCurLetter()
     elseif pd.buttonJustReleased(pd.kButtonUp) then
         drawCell(self.puz, self.curRow, self.curCol)
-        self.curRow -= 1
+        local row = self.curRow - 1
+        while not isLetterCell(self.puz, row, self.curCol) do
+            if row == self.curRow then
+                row -= 1
+                break
+            end
+
+            row -= 1
+            if row < 1 then
+                row = self.puz.height
+            end
+        end
+
+        self.curRow = row
         if not isLetterCell(self.puz, self.curRow, self.curCol) then
-            self.curRow = self.puz.height
             self.curRow, self.curCol, self.across =
-                findNextWord(self.puz, self.curRow, self.curCol, self.across)
+                findPrevWord(self.puz, self.curRow, self.curCol, self.across)
         end
         self:displayCurrentCell(true)
         self:setCurLetter()
@@ -103,17 +128,21 @@ end
 function StatePlay:displayCurrentWord()
     local wordRect = wordBoundingRect(self.puz, self.curRow, self.curCol, self.across)
     local wordImg = getWordImage(wordRect)
+    setClipRect()
     wordImg:draw(wordRect.x, wordRect.y)
+    gfx.clearClipRect()
 end
 
 function StatePlay:displayCurrentCell(redraw)
     scrollToWord(self.puz, self.curRow, self.curCol, self.across)
+    scrollToCell(fromRowCol(self.curRow, self.curCol))
     if redraw then
         displayBoard()
         displayClue(self.puz, self.curRow, self.curCol, self.across)
         self:displayCurrentWord()
     end
 
+    setClipRect()
     local img = getCellImage(self.puz, self.curRow, self.curCol):invertedImage()
     gfx.lockFocus(img)
     local color = gfx.getColor()
@@ -123,6 +152,7 @@ function StatePlay:displayCurrentCell(redraw)
     gfx.setColor(color)
     gfx.unlockFocus()
     img:draw(getScreenCoord(self.curRow, self.curCol))
+    gfx.clearClipRect()
 end
 
 function StatePlay:setCurLetter()

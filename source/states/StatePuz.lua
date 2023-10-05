@@ -23,12 +23,14 @@ local puzzleInfoLineHeight = 14
 local font = getClueFont()
 local fontHeight = font:getHeight()
 local gridView = grid.new(gridWidth, font:getHeight() + 4)
+local displayGridView = false
 
 local puzFiles
 
 
 function StatePuz:init()
     StatePuz.super.init(self)
+    self.deleteCount = 0
 end
 
 function StatePuz:enter(prevState)
@@ -43,12 +45,17 @@ end
 
 function StatePuz:update()
     if pd.buttonJustReleased(pd.kButtonDown) then
+        self.deleteCount = 0
+        displayMessage(' ', 1)
         gridView:selectNextRow(true, true, false)
         displayPuzzleInfo(selectedRow())
     elseif pd.buttonJustReleased(pd.kButtonUp) then
+        self.deleteCount = 0
+        displayMessage(' ', 1)
         gridView:selectPreviousRow(true)
         displayPuzzleInfo(selectedRow())
     elseif pd.buttonJustReleased(pd.kButtonA) then
+        self.deleteCount = 0
         local row = selectedRow()
         local puz, err = loadPuzzleFile(puzFiles[row])
         if puz then
@@ -59,13 +66,35 @@ function StatePuz:update()
             font:drawText(err, puzzleInfoX, 220)
         end
     elseif pd.buttonJustReleased(pd.kButtonB) then
+        local row = selectedRow()
+        if string.sub(puzFiles[row], 1, 5) == '/puz/' then
+            displayMessage('Cannot delete builtin puzzle file', 1)
+        else
+            self.deleteCount += 1
+            if self.deleteCount < 3 then
+                displayMessage('Delete ' .. puzFiles[selectedRow()] .. '  **'
+                        .. self.deleteCount .. '**', 1)
+            else
+                pd.file.delete(puzFiles[row])
+                pd.file.delete('/saves/' .. getBaseFileName(puzFiles[row]) .. '.json')
+                table.remove(puzFiles, row)
+                gridView:setNumberOfRows(#puzFiles)
+                gridView:scrollToRow(1, false)
+                gridView:setSelectedRow(1)
+                displayGridView = true
+                displayMessage(' ', 1)
+                clearPuzzleInfoPane()
+            end
+        end
     end
 
-    if gridView.needsDisplay then
+    if gridView.needsDisplay or displayGridView then
         drawSaveHeader(gridX, gridY - 18, gridWidth, fontHeight)
         gridView:drawInRect(gridX, gridY, gridWidth, gridHeight - fontHeight)
         gfx.drawRect(gridX - 2, gridY - 20, gridWidth + 4, gridHeight + 4)
-        displayPuzzleInfo(selectedRow())
+        local row = selectedRow()
+        displayPuzzleInfo(row)
+        displayGridView = false
     end
 end
 
@@ -123,6 +152,9 @@ function selectedRow()
 end
 
 function displayPuzzleInfo(row)
+    if row < 1 or row > #puzFiles then
+        return
+    end
     clearPuzzleInfoPane()
     local file = puzFiles[row]
     local puz = loadPuzzleInfo(file)

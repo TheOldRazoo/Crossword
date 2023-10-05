@@ -6,7 +6,8 @@ local cellWidth <const> = 28
 local cellHeight <const> = 28
 local borderWidth <const> = 1
 
-local boardClipRect <const> = pd.geometry.rect.new(0, 16, pd.display.getWidth(), 202)
+local titleHeight = 18
+local boardClipRect <const> = pd.geometry.rect.new(0, titleHeight, pd.display.getWidth(), 204)
 local boardOrigin <const> =  { x = boardClipRect.x, y = boardClipRect.y }
 
 local boardImage = nil
@@ -94,8 +95,12 @@ function drawBoard(puz)
     end
 end
 
-function displayBoard()
+function setClipRect()
     gfx.setScreenClipRect(boardClipRect)
+end
+
+function displayBoard()
+    setClipRect()
     clearBoardScreen()
     boardImage:draw(boardOrigin.x, boardOrigin.y)
     gfx.clearClipRect()
@@ -151,17 +156,25 @@ function scrollToCell(rowcol)
     local curX = x + boardOrigin.x
     local curY = y + boardOrigin.y
     if curX < boardClipRect.x then
-        boardOrigin.x = boardOrigin.x - curX + boardClipRect.x
+        boardOrigin.x = x - curX
     end
-    if curX + boardOrigin.x + cellWidth > boardClipRect.width then
-        boardOrigin.x = boardOrigin.x - (curX + cellWidth - boardClipRect.width)
+    if curX + cellWidth > boardClipRect.width + boardOrigin.x then
+        boardOrigin.x = boardClipRect.width - (x + cellWidth)
     end
     if curY < boardClipRect.y then
-        boardOrigin.y = boardOrigin.y - curY + boardClipRect.y
+        boardOrigin.y = titleHeight - y - curY
     end
-    if curY + boardOrigin.y + cellHeight > boardClipRect.height + boardOrigin.y then
-        boardOrigin.y = boardOrigin.y - (curY + cellHeight - boardClipRect.height)
+    if curY + cellHeight > boardClipRect.height + titleHeight then
+        boardOrigin.y = (boardClipRect.height + titleHeight) - (y + cellHeight)
     end
+
+    if boardOrigin.x > 0 then
+        boardOrigin.x = 0
+    end
+    if boardOrigin.y > titleHeight then
+        boardOrigin.y = titleHeight
+    end
+    -- print(string.format('RowCol=%d Origin=(%d,%d)', rowcol, boardOrigin.x, boardOrigin.y))
 end
 
 function willWordFitOnScreen(startRowCol, endRowCol)
