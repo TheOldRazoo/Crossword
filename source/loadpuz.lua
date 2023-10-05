@@ -108,15 +108,18 @@ function loadPuzzleFile(name)
     local acrossClue, downClue = {}, {}
     local clueNum = 1
     local clueUsed = false
+    local clueIndex = 1
     for i = 1, puz.height do
         for j = 1, puz.width do
             if needsAcrossNumber(puz, i, j) then
-                acrossClue[#acrossClue + 1] = { clueNum, fromRowCol(i, j) }
+                acrossClue[#acrossClue + 1] = { clueNum, fromRowCol(i, j), clueIndex }
+                clueIndex += 1
                 clueUsed = true
             end
 
             if needsDownNumber(puz, i, j) then
-                downClue[#downClue + 1] = { clueNum, fromRowCol(i, j) }
+                downClue[#downClue + 1] = { clueNum, fromRowCol(i, j), clueIndex }
+                clueIndex += 1
                 clueUsed = true
             end
 
@@ -125,14 +128,6 @@ function loadPuzzleFile(name)
                 clueUsed = false
             end
         end
-    end
-
-    for i = 1, #acrossClue do
-        table.insert(acrossClue[i], i)
-    end
-
-    for i = 1, #downClue do
-        table.insert(downClue[i], i + #acrossClue)
     end
 
     puz.acrossClue = acrossClue
