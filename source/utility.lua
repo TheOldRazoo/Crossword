@@ -6,6 +6,8 @@ local tinyFont = gfx.font.new('fonts/Pico8')
 local letterFont = gfx.font.new('fonts/Roobert-11-Medium')
 local clueFont = gfx.font.new('fonts/Roobert-10-Bold')
 
+local menuImg = gfx.image.new('/images/menu')
+
 function getTinyFont()
     return tinyFont
 end
@@ -16,6 +18,10 @@ end
 
 function getClueFont()
     return clueFont
+end
+
+function getMenuImage()
+    return menuImg
 end
 
 function clearScreen()

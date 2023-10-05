@@ -10,12 +10,19 @@ import 'states/StateStart'
 import 'states/StatePlay'
 import 'states/StatePuz'
 
+local firstTime = true
+
 stateStart = StateStart()
 statePuz = StatePuz()
 statePlay = StatePlay()
 stateManager = StateManager(stateStart)
 
 function playdate.update()
+    if firstTime then
+        playdate.setMenuImage(getMenuImage())
+        firstTime = false
+    end
+
     playdate.timer.updateTimers()
     stateManager:getCurrentState():update()
 end
