@@ -229,6 +229,19 @@ function needsDownNumber(puz, row, col)
             and puz.grid[row + 1][col] ~= '.'
 end
 
+function findFirstWord(puz, across)
+    for row = 1, puz.height do
+        for col = 1, puz.width do
+            local startRowCol, endRowCol = findWord(puz, row, col, across)
+            if startRowCol then
+                return startRowCol, endRowCol
+            end
+        end
+    end
+
+    return nil, nil
+end
+
 function findWord(puz, row, col, across)
 local startRowCol, endRowCol
     if across then

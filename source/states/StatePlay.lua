@@ -18,8 +18,8 @@ function StatePlay:enter(prevState)
     menu:addMenuItem('check errors', function() self:checkForErrors() end)
     menu:addMenuItem('clear errors', function() self:removeErrors() end)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
-    self.curRow = 1
-    self.curCol = 1
+    local startRowCol = findFirstWord(self.puz, true)
+    self.curRow, self.curCol = toRowCol(startRowCol)
     self.curLetter = 1
     self.across = true
     initScreen()
@@ -27,7 +27,7 @@ function StatePlay:enter(prevState)
     displayTitle(self.puz)
     drawBoard(self.puz)
     displayBoard()
-    displayClue(self.puz, 1, 1, true)
+    displayClue(self.puz, self.curRow, self.curCol, true)
     self:displayCurrentCell(true)
 end
 

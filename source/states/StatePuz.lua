@@ -156,6 +156,7 @@ function displayPuzzleInfo(row)
         return
     end
     clearPuzzleInfoPane()
+    displayMessage(' ', 1)
     local file = puzFiles[row]
     local puz = loadPuzzleInfo(file)
     if puz then
