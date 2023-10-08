@@ -142,11 +142,11 @@ function loadPuzzleFile(name)
 
     file:close()
 
-    if cksum_cib == puz.cksum_cib then
-        return puz, nil
-    end
+    --if cksum_cib ~= puz.cksum_cib then
+    --    return nil, "PUZ file checksum does not match, file may be corrupted"
+    --end
 
-    return nil, "PUZ file checksum does not match, file may be corrupted"
+    return puz, nil
 end
 
 function loadPuzzleInfo(name)

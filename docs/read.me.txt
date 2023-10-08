@@ -1,0 +1,71 @@
+
+Across Lite Puzzle Player
+
+This app will allow crossword puzzles in the Across Lite format to be played
+on the Panic Playdate.  Across Lite is a standard format for downloadable
+crossword puzzles used by many media organizations.  Some access to these
+puzzles is behind a paywall but a number of them are freely available for
+download.  A site that I have found useful for downloading these puzzles
+is:
+
+https://crosswordfiend.com/download/
+
+The Crossword app has two main screens.  1) the puzzle selection screen and
+2) The puzzle play screen.  Following are the button options for each:
+
+Puzzle Selection Screen
+
+Up/Down     Select puzzle
+A           Open puzzle
+B           Delete puzzle (press 3 times to delete)
+
+Puzzle Play Screen
+
+D-Pad       Used to select current letter cell
+A           Selects the next letter
+B+A         Selects the previous letter (hold B and press A)
+B           Change word selection from across to down and vice versa
+
+On the Puzzle Play Screen there are menu options for checking and removing errors.
+Also an "exit puzzle" option will return to the Puzzle Selection Screen.  The
+current state of the puzzle is saved when the Play screen is exited and is
+restored on reentry to that puzzle.
+
+Crossword comes with 3 puzzles built into the app.  These are as follows and since
+they are part of the executable they cannot be deleted.
+
+Mostly Musical Mini 23.puz
+Name That Tune.puz
+wsj230929.puz
+
+Puzzle files that you download must be placed in the puzzle directory of the
+Crossword app.  Unfortunately, at present, the only way to do this is by connecting
+the Playdate to a computer via USB.  Once the Playdate is connected to your PC/Mac
+if it does not appear as a drive then on the Playdate system menu select the following:
+
+settings -> System -> Reboot to Data Disk
+
+Once connected your .puz files should be placed in the following folder:
+
+Data -> com.bwit.crossword -> puzzles
+
+This app will only work with valid Across Lite puzzle files.  These files contain
+internal checksums used to validate the integrity of the file.  I've found that a
+number of these files don't seem to calculate the checksum correctly even though
+the file is fine and perfectly playable.  As a result I've disabled validation of
+the checksum in the hopes that the maximum number of files will be available for
+you to play.  If this proves to be a problem for folks I will issue a new version
+the reinstates the checksum validation.  In that case files with bad checksums
+will refuse to open.
+
+Until the past few years the New York Times published their crosswords in Across
+Lite format.  They decided to stop doing that in 2021 or 2022, not sure exactly
+when.  At any rate I've providing a ZIP archive of most, if not all, of the NYT
+puzzles published in Across Lite.
+
+Please feel free to let me know if you encounter errors or uncover bugs in the
+app.
+
+Bob Withers
+bwit@pobox.com
+
