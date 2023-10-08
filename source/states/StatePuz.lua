@@ -63,7 +63,7 @@ function StatePuz:update()
             statePlay:setPuzzle(puz)
             stateManager:setCurrentState(statePlay)
         else
-            font:drawText(err, puzzleInfoX, 220)
+            displayMessage(err, 1)
         end
     elseif pd.buttonJustReleased(pd.kButtonB) then
         local row = selectedRow()

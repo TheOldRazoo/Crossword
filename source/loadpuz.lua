@@ -17,11 +17,14 @@ local function cksumRegion(data, start, len, cksum)
     return cksum
 end
 
-local zeroByte <const> = string.pack("b", 0)
+local zeroByte <const> = string.pack("z", "")
 
 local function calcCheckSum(fileData, puz)
-    local cksum = cksumRegion(fileData, 0x0f, 8, 0)
-    cksum = cksumRegion(fileData, 0x35, puz.width * puz.height * 2, cksum)
+    local cksum = cksumRegion(fileData, 0x2d, 8, 0)
+    local gridSize = puz.width * puz.height
+    cksum = cksumRegion(fileData, 0x35, gridSize, cksum)
+    cksum = cksumRegion(fileData, 0x35 + gridSize, gridSize, cksum)
+
     if #puz.title > 0 then
         cksum = cksumRegion(puz.title, 1, #puz.title, cksum)
         cksum = cksumRegion(zeroByte, 1, 1, cksum)
@@ -68,6 +71,7 @@ function loadPuzzleFile(name)
     local puz = {}
     puz.name = name
     puz.chksum = string.unpack("<I2", fileData, 1)
+    puz.cksum_cib = string.unpack("<I2", fileData, 15)
     puz.version = string.unpack("z", fileData, 25)
     puz.width = string.unpack("I1", fileData, 45)
     puz.height = string.unpack("I1", fileData, 46)
@@ -133,10 +137,16 @@ function loadPuzzleFile(name)
     puz.acrossClue = acrossClue
     puz.downClue = downClue
 
+    local cksum_cib = cksumRegion(fileData, 0x2d, 8, 0)
     local cksum = calcCheckSum(fileData, puz)
 
     file:close()
-    return puz, nil
+
+    if cksum_cib == puz.cksum_cib then
+        return puz, nil
+    end
+
+    return nil, "PUZ file checksum does not match, file may be corrupted"
 end
 
 function loadPuzzleInfo(name)
@@ -158,6 +168,7 @@ function loadPuzzleInfo(name)
     puz.author, pos = string.unpack("z", fileData, pos)
     puz.copyright, pos = string.unpack("z", fileData, pos)
     file:close()
+
     return puz, nil
 end
 
