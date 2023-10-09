@@ -88,8 +88,8 @@ function drawBoard(puz)
         boardImage = gfx.image.new(puz.width * cellWidth, puz.height * cellHeight)
     end
 
-    for i = 1, puz.width do
-        for j = 1, puz.height do
+    for i = 1, puz.height do
+        for j = 1, puz.width do
             drawCell(puz, i, j)
         end
     end

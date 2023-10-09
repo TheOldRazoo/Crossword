@@ -206,7 +206,7 @@ function displayPuzzleInfo(row)
                 infoY += puzzleInfoLineHeight
             end
 
-            if pd.file.exists('/saves/' .. getBaseFileName(puzFiles[row]) .. '.json') then
+            if pd.file.exists(getSaveFileName(puzFiles[row]) .. '.json') then
                 infoY += puzzleInfoLineHeight * 2
                 font:drawText('* Saved Data *', puzzleInfoX, infoY)
             end

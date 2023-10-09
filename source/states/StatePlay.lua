@@ -20,7 +20,7 @@ function StatePlay:enter(prevState)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
     local startRowCol = findFirstWord(self.puz, true)
     self.curRow, self.curCol = toRowCol(startRowCol)
-    self.curLetter = 1
+    self:setCurLetter()
     self.across = true
     self.allowCrank = true
     self.prevState = prevState
@@ -139,13 +139,12 @@ function StatePlay:update()
             self.puz.grid[self.curRow][self.curCol] = string.sub(letters,
                                         self.curLetter, self.curLetter)
             self:displayCurrentCell(false)
-            self.allowCrank = false
-            local delay = 200 - (math.abs(accel) * 5)
-            if delay < 0 then
-                delay = 0
+            local delay = 600 - (math.abs(accel) * 100)
+            if delay > 0 then
+                self.allowCrank = false
+                pd.timer.performAfterDelay(delay, function() self.allowCrank = true end)
             end
-            -- print(change, accel, delay)
-            pd.timer.performAfterDelay(delay, function() self.allowCrank = true end)
+            print(change, accel, delay)
         end
     end
 end
