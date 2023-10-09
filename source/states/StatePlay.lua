@@ -191,8 +191,8 @@ end
 function StatePlay:checkForErrors()
     local errors, blanks = 0, 0
     local puz = self.puz
-    for row = 1, puz.width do
-        for col = 1, puz.height do
+    for row = 1, puz.height do
+        for col = 1, puz.width do
             if puz.grid[row][col] == " " then
                 blanks += 1
             elseif puz.grid[row][col] ~= puz.solution[row][col] then
@@ -219,8 +219,8 @@ end
 
 function StatePlay:removeErrors()
     local puz = self.puz
-    for row = 1, puz.width do
-        for col = 1, puz.height do
+    for row = 1, puz.height do
+        for col = 1, puz.width do
             if puz.grid[row][col] ~= puz.solution[row][col] then
                 puz.grid[row][col] = ' '
             end
