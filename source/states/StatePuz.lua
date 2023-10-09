@@ -90,7 +90,7 @@ function StatePuz:update()
                         .. self.deleteCount .. '**', 1)
             else
                 pd.file.delete(puzFiles[row])
-                pd.file.delete('/saves/' .. getBaseFileName(puzFiles[row]) .. '.json')
+                pd.file.delete(getSaveFileName(puzFiles[row]))
                 table.remove(puzFiles, row)
                 gridView:setNumberOfRows(#puzFiles)
                 gridView:scrollToRow(1, false)

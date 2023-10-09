@@ -410,11 +410,11 @@ function findPrevWord(puz, row, col, across)
 end
 
 function savePuzzle(puz)
-    pd.datastore.write(puz.grid, 'saves/' .. getBaseFileName(puz.name))
+    pd.datastore.write(puz.grid, getSaveFileName(puz.name))
 end
 
 function restorePuzzle(puz)
-    local data = pd.datastore.read('saves/' .. getBaseFileName(puz.name))
+    local data = pd.datastore.read(getSaveFileName(puz.name))
     if data then
         puz.grid = data
     end

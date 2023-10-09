@@ -52,6 +52,13 @@ function getBaseFileName(name)
     return name
 end
 
+function getSaveFileName(name)
+    name = string.gsub(name, '.puz$', '')
+    name = string.gsub(name, '^/puzzles/', '/saves/')
+    name = string.gsub(name, '^/puz/', '/saves/')
+    return name
+end
+
 function wrapText(text, font, width)
     local line = ''
     local lines = {}

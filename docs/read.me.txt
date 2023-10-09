@@ -51,6 +51,10 @@ Once connected your .puz files should be placed in the following folder:
 
 Data -> com.bwit.crossword -> puzzles
 
+Note that you can create sub folders to organize your puzzles if you so desire.  The
+puzzle selection screen will allow the hierarchy to be traversed to select the puzzle
+you wish to play.  Creating subfolders is not required.
+
 This app will only work with valid Across Lite puzzle files.  These files contain
 internal checksums used to validate the integrity of the file.  I've found that a
 number of these files don't seem to calculate the checksum correctly even though
