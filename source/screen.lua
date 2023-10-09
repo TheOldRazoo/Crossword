@@ -190,6 +190,12 @@ function willWordFitOnScreen(startRowCol, endRowCol)
     return wordSize < boardClipRect.height
 end
 
+function pauseScrollTimer()
+    if clueScrollTimer then
+        clueScrollTimer:pause()
+    end
+end
+
 function displayMessage(msg, msgPos)
     if msgPos == nil then
         msgPos = 1
@@ -205,9 +211,7 @@ function displayMessage(msg, msgPos)
                 clueScrollTimer:start()
             end
         else
-            if clueScrollTimer then
-                clueScrollTimer:pause()
-            end
+            pauseScrollTimer()
         end
     end
 

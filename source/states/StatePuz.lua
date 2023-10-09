@@ -27,9 +27,10 @@ local displayGridView = false
 
 local puzFiles
 
-
-function StatePuz:init()
+function StatePuz:init(puzzleDir, parentState)
     StatePuz.super.init(self)
+    self.puzzleDir = puzzleDir
+    self.parentState = parentState
     self.deleteCount = 0
 end
 
@@ -57,6 +58,17 @@ function StatePuz:update()
     elseif pd.buttonJustReleased(pd.kButtonA) then
         self.deleteCount = 0
         local row = selectedRow()
+
+        if puzFiles[row] == '..' and self.parentState then
+            stateManager:setCurrentState(self.parentState)
+            return
+        end
+
+        if pd.file.isdir(puzFiles[row]) then
+            stateManager:setCurrentState(StatePuz(puzFiles[row], self))
+            return
+        end
+
         local puz, err = loadPuzzleFile(puzFiles[row])
         if puz then
             restorePuzzle(puz)
@@ -69,6 +81,8 @@ function StatePuz:update()
         local row = selectedRow()
         if string.sub(puzFiles[row], 1, 5) == '/puz/' then
             displayMessage('Cannot delete builtin puzzle file', 1)
+        elseif pd.file.isdir(puzFiles[row]) then
+            displayMessage('Cannot delete folders', 1)
         else
             self.deleteCount += 1
             if self.deleteCount < 3 then
@@ -100,22 +114,27 @@ end
 
 function StatePuz:listPuzzleFiles()
     local puzFiles = {}
-    local files = playdate.file.listFiles('/puz')
-    for i = 1, #files do
-        if string.match(files[i], '%.puz$') then
-            table.insert(puzFiles, '/puz/' .. files[i])
+    if self.parentState == nil then     -- if top level state list internal puzzles
+        local files = playdate.file.listFiles('/puz')
+        for i = 1, #files do
+            if string.match(files[i], '%.puz$') then
+                table.insert(puzFiles, '/puz/' .. files[i])
+            end
         end
+    else
+        table.insert(puzFiles, '..')
     end
 
-    files = playdate.file.listFiles('/puzzles')
+    local files = playdate.file.listFiles(self.puzzleDir)
     for i = 1, #files do
-        if string.match(files[i], '%.puz$') then
-            table.insert(puzFiles, '/puzzles/' .. files[i])
+        if string.match(files[i], '%.puz$') or pd.file.isdir(self.puzzleDir .. files[i]) then
+            table.insert(puzFiles, self.puzzleDir .. files[i])
         end
     end
 
     return puzFiles
 end
+
 
 function gridView:drawCell(section, row, col, selected, x, y, width, height)
     local c, b
@@ -158,34 +177,39 @@ function displayPuzzleInfo(row)
     clearPuzzleInfoPane()
     displayMessage(' ', 1)
     local file = puzFiles[row]
-    local puz = loadPuzzleInfo(file)
-    if puz then
-        local infoY = puzzleInfoY
-        gfx.setColor(color)
-        gfx.setBackgroundColor(backgroundColor)
-        local lines = wrapText(puz.title, font, puzzleInfoWidth)
-        for i = 1, #lines do
-            font:drawText(lines[i], puzzleInfoX, infoY)
-            infoY += puzzleInfoLineHeight
-        end
+    displayMessage(file, 1)
+    gfx.setColor(color)
+    gfx.setBackgroundColor(backgroundColor)
+    if pd.file.isdir(file) then
+        font:drawText('** Folder **', puzzleInfoX, puzzleInfoY)
+    else
+        local puz = loadPuzzleInfo(file)
+        if puz then
+            local infoY = puzzleInfoY
+            local lines = wrapText(puz.title, font, puzzleInfoWidth)
+            for i = 1, #lines do
+                font:drawText(lines[i], puzzleInfoX, infoY)
+                infoY += puzzleInfoLineHeight
+            end
 
-        infoY += puzzleInfoLineHeight
-        lines = wrapText(puz.author, font, puzzleInfoWidth)
-        for i = 1, #lines do
-            font:drawText(lines[i], puzzleInfoX, infoY)
             infoY += puzzleInfoLineHeight
-        end
+            lines = wrapText(puz.author, font, puzzleInfoWidth)
+            for i = 1, #lines do
+                font:drawText(lines[i], puzzleInfoX, infoY)
+                infoY += puzzleInfoLineHeight
+            end
 
-        infoY += puzzleInfoLineHeight
-        lines = wrapText(puz.copyright, font, puzzleInfoWidth)
-        for i = 1, #lines do
-            font:drawText(lines[i], puzzleInfoX, infoY)
             infoY += puzzleInfoLineHeight
-        end
+            lines = wrapText(puz.copyright, font, puzzleInfoWidth)
+            for i = 1, #lines do
+                font:drawText(lines[i], puzzleInfoX, infoY)
+                infoY += puzzleInfoLineHeight
+            end
 
-        if pd.file.exists('/saves/' .. getBaseFileName(puzFiles[row]) .. '.json') then
-            infoY += puzzleInfoLineHeight * 2
-            font:drawText('* Saved Data *', puzzleInfoX, infoY)
+            if pd.file.exists('/saves/' .. getBaseFileName(puzFiles[row]) .. '.json') then
+                infoY += puzzleInfoLineHeight * 2
+                font:drawText('* Saved Data *', puzzleInfoX, infoY)
+            end
         end
     end
 end

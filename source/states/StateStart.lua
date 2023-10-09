@@ -9,7 +9,7 @@ function StateStart:init()
 end
 
 function StateStart:update()
-    stateManager:setCurrentState(statePuz)
+    stateManager:setCurrentState(StatePuz('/puzzles/', nil))
 end
 
 function StateStart:createPuzzleDir()

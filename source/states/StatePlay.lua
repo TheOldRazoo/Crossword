@@ -23,6 +23,7 @@ function StatePlay:enter(prevState)
     self.curLetter = 1
     self.across = true
     self.allowCrank = true
+    self.prevState = prevState
     initScreen()
     gfx.clear()
     displayTitle(self.puz)
@@ -131,7 +132,7 @@ function StatePlay:update()
                 if self.curLetter < 1 then
                     self.curLetter = #letters
                 end
-            elseif change > 0 then
+            else
                 self.curLetter = (self.curLetter % #letters) + 1
             end
 
@@ -139,7 +140,12 @@ function StatePlay:update()
                                         self.curLetter, self.curLetter)
             self:displayCurrentCell(false)
             self.allowCrank = false
-            pd.timer.performAfterDelay(100, function() self.allowCrank = true end)
+            local delay = 200 - (math.abs(accel) * 5)
+            if delay < 0 then
+                delay = 0
+            end
+            -- print(change, accel, delay)
+            pd.timer.performAfterDelay(delay, function() self.allowCrank = true end)
         end
     end
 end
@@ -226,7 +232,8 @@ function StatePlay:removeErrors()
 end
 
 function StatePlay:exitPuzzle()
-    stateManager:setCurrentState(statePuz)
+    pauseScrollTimer()
+    stateManager:setCurrentState(self.prevState)
 end
 
 function StatePlay:savePuzzle()

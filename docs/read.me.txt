@@ -25,6 +25,8 @@ D-Pad       Used to select current letter cell
 A           Selects the next letter
 B+A         Selects the previous letter (hold B and press A)
 B           Change word selection from across to down and vice versa
+Crank       The crank may be used for letter selection.  Turn clockwise for
+            next letter(s) and counter-clockwise for previous.
 
 On the Puzzle Play Screen there are menu options for checking and removing errors.
 Also an "exit puzzle" option will return to the Puzzle Selection Screen.  The
@@ -68,4 +70,10 @@ app.
 
 Bob Withers
 bwit@pobox.com
+
+ChangeLog
+v1.00 - first public release
+v1.01 - implemented crank support for letter selection.
+v1.02 - first pass at a file browser for puzzle selection screen.
+
 

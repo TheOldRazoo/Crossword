@@ -13,7 +13,6 @@ import 'states/StatePuz'
 local firstTime = true
 
 stateStart = StateStart()
-statePuz = StatePuz()
 statePlay = StatePlay()
 stateManager = StateManager(stateStart)
 

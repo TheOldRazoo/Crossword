@@ -29,6 +29,10 @@ function clearScreen()
 end
 
 function getBaseFileName(name)
+    if string.find(name, '/$') then
+        name = string.sub(name, 1, #name - 1)
+    end
+
     local first, last = 1, 0
     local slash = 1
     while first do
