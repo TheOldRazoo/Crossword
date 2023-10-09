@@ -82,5 +82,7 @@ v1.02 - first pass at a file browser for puzzle selection screen.
 v1.03 - tweaked crank acceleration
 v1.04 - fixed bug in draw screen for puzzles that are not square
 v1.05 - fixed above bug in check errors and clear errors
+v1.10 - public release of fixes so far
+
 
 
