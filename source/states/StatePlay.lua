@@ -22,6 +22,7 @@ function StatePlay:enter(prevState)
     self.curRow, self.curCol = toRowCol(startRowCol)
     self.curLetter = 1
     self.across = true
+    self.allowCrank = true
     initScreen()
     gfx.clear()
     displayTitle(self.puz)
@@ -122,6 +123,24 @@ function StatePlay:update()
         end
         self:displayCurrentCell(true)
         self:setCurLetter()
+    elseif not pd.isCrankDocked() and self.allowCrank then
+        local change, accel = pd.getCrankChange()
+        if change ~= 0 then
+            if change < 0 then
+                self.curLetter -= 1
+                if self.curLetter < 1 then
+                    self.curLetter = #letters
+                end
+            elseif change > 0 then
+                self.curLetter = (self.curLetter % #letters) + 1
+            end
+
+            self.puz.grid[self.curRow][self.curCol] = string.sub(letters,
+                                        self.curLetter, self.curLetter)
+            self:displayCurrentCell(false)
+            self.allowCrank = false
+            pd.timer.performAfterDelay(100, function() self.allowCrank = true end)
+        end
     end
 end
 
