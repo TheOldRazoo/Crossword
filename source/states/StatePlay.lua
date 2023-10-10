@@ -61,25 +61,49 @@ function StatePlay:update()
             self:displayCurrentCell(true)
         end
     elseif pd.buttonJustReleased(pd.kButtonRight) then
-        drawCell(self.puz, self.curRow, self.curCol)
-        self.curCol += 1
-        if not isLetterCell(self.puz, self.curRow, self.curCol) then
-            self.curRow, self.curCol, self.across =
-                    findNextWord(self.puz, self.curRow, self.curCol, self.across)
+        if pd.getButtonState() & pd.kButtonB > 0 then
+            ignoreB = true
+            self.curLetter += 10
+            if self.curLetter > #letters then
+                self.curLetter -= #letters
+            end
+            self.puz.grid[self.curRow][self.curCol] =
+                                string.sub(letters, self.curLetter, self.curLetter)
+            self:displayCurrentCell(false)
+        else
+            ignoreB = false
+            drawCell(self.puz, self.curRow, self.curCol)
+            self.curCol += 1
+            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+                self.curRow, self.curCol, self.across =
+                        findNextWord(self.puz, self.curRow, self.curCol, self.across)
+            end
+            self:displayCurrentCell(true)
+            self:setCurLetter()
         end
-        self:displayCurrentCell(true)
-        self:setCurLetter()
     elseif pd.buttonJustReleased(pd.kButtonLeft) then
-        drawCell(self.puz, self.curRow, self.curCol)
-        self.curCol -= 1
-        if not isLetterCell(self.puz, self.curRow, self.curCol) then
-            self.curRow, self.curCol, self.across =
-                    findPrevWord(self.puz, self.curRow, self.curCol, self.across)
-            local startRowCol, endRowCol = findWord(self.puz, self.curRow, self.curCol, self.across)
-            self.curRow, self.curCol = toRowCol(endRowCol)
+        if pd.getButtonState() & pd.kButtonB > 0 then
+            ignoreB = true
+            self.curLetter -= 10
+            if self.curLetter < 1 then
+                self.curLetter += #letters
+            end
+            self.puz.grid[self.curRow][self.curCol] =
+                                string.sub(letters, self.curLetter, self.curLetter)
+            self:displayCurrentCell(false)
+        else
+            ignoreB = false
+            drawCell(self.puz, self.curRow, self.curCol)
+            self.curCol -= 1
+            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+                self.curRow, self.curCol, self.across =
+                        findPrevWord(self.puz, self.curRow, self.curCol, self.across)
+                local startRowCol, endRowCol = findWord(self.puz, self.curRow, self.curCol, self.across)
+                self.curRow, self.curCol = toRowCol(endRowCol)
+            end
+            self:displayCurrentCell(true)
+            self:setCurLetter()
         end
-        self:displayCurrentCell(true)
-        self:setCurLetter()
     elseif pd.buttonJustReleased(pd.kButtonDown) then
         drawCell(self.puz, self.curRow, self.curCol)
         local row = self.curRow + 1
@@ -144,7 +168,7 @@ function StatePlay:update()
                 self.allowCrank = false
                 pd.timer.performAfterDelay(delay, function() self.allowCrank = true end)
             end
-            print(change, accel, delay)
+            -- print(change, accel, delay)
         end
     end
 end
