@@ -86,4 +86,5 @@ v1.04 - fixed bug in draw screen for puzzles that are not square
 v1.05 - fixed above bug in check errors and clear errors
 v1.10 - public release of fixes so far
 v1.11 - added B+Left/Right to advance letter to previous or next by 10
+v1.12 - correct findNextWord and findPrevWord for down words - sometimes skipped words
 

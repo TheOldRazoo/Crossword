@@ -362,7 +362,7 @@ function findNextWord(puz, row, col, across)
             return row, col, across
         end
 
-        if not across and needsDownNumber(puz, row, col) then
+        if not across and findDownWord(puz, row, col) then
             return row, col, across
         end
 
@@ -393,7 +393,7 @@ function findPrevWord(puz, row, col, across)
             return row, col, across
         end
 
-        if not across and needsDownNumber(puz, row, col) then
+        if not across and findDownWord(puz, row, col) then
             return row, col, across
         end
 
