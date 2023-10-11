@@ -24,6 +24,8 @@ Puzzle Play Screen
 D-Pad       Used to select current letter cell
 A           Selects the next letter
 B+A         Selects the previous letter (hold B and press A)
+B+Left      Select the letter 10 places previous
+B+Right     Advances to current letter by 10 places
 B           Change word selection from across to down and vice versa
 Crank       The crank may be used for letter selection.  Turn clockwise for
             next letter(s) and counter-clockwise for previous.

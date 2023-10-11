@@ -180,7 +180,9 @@ function displayPuzzleInfo(row)
     displayMessage(file, 1)
     gfx.setColor(color)
     gfx.setBackgroundColor(backgroundColor)
-    if pd.file.isdir(file) then
+    if file == '..' then
+        font:drawText('** Parent Folder **', puzzleInfoX, puzzleInfoY)
+    elseif pd.file.isdir(file) then
         font:drawText('** Folder **', puzzleInfoX, puzzleInfoY)
     else
         local puz = loadPuzzleInfo(file)
