@@ -25,7 +25,9 @@ D-Pad       Used to select current letter cell
 A           Selects the next letter
 B+A         Selects the previous letter (hold B and press A)
 B+Left      Select the letter 10 places previous
-B+Right     Advances to current letter by 10 places
+B+Right     Advances the current letter by 10 places
+B+Up        Find previous blank cell
+B+Down      Find next blank cell
 B           Change word selection from across to down and vice versa
 Crank       The crank may be used for letter selection.  Turn clockwise for
             next letter(s) and counter-clockwise for previous.
@@ -87,4 +89,5 @@ v1.05 - fixed above bug in check errors and clear errors
 v1.10 - public release of fixes so far
 v1.11 - added B+Left/Right to advance letter to previous or next by 10
 v1.12 - correct findNextWord and findPrevWord for down words - sometimes skipped words
+v1.13 - implement B+Down/Up to find next/previous blank cell
 

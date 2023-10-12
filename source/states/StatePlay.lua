@@ -105,49 +105,59 @@ function StatePlay:update()
             self:setCurLetter()
         end
     elseif pd.buttonJustReleased(pd.kButtonDown) then
-        drawCell(self.puz, self.curRow, self.curCol)
-        local row = self.curRow + 1
-        while not isLetterCell(self.puz, row, self.curCol) do
-            if row == self.curRow then
+        if pd.getButtonState() & pd.kButtonB > 0 then
+            ignoreB = true
+            self:findBlankCell(true)
+        else
+            drawCell(self.puz, self.curRow, self.curCol)
+            local row = self.curRow + 1
+            while not isLetterCell(self.puz, row, self.curCol) do
+                if row == self.curRow then
+                    row += 1
+                    break
+                end
+
                 row += 1
-                break
+                if row > self.puz.height then
+                    row = 1
+                end
             end
 
-            row += 1
-            if row > self.puz.height then
-                row = 1
+            self.curRow = row
+            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+                self.curRow, self.curCol, self.across =
+                    findNextWord(self.puz, self.curRow, self.curCol, self.across)
             end
+            self:displayCurrentCell(true)
+            self:setCurLetter()
         end
-
-        self.curRow = row
-        if not isLetterCell(self.puz, self.curRow, self.curCol) then
-            self.curRow, self.curCol, self.across =
-                findNextWord(self.puz, self.curRow, self.curCol, self.across)
-        end
-        self:displayCurrentCell(true)
-        self:setCurLetter()
     elseif pd.buttonJustReleased(pd.kButtonUp) then
-        drawCell(self.puz, self.curRow, self.curCol)
-        local row = self.curRow - 1
-        while not isLetterCell(self.puz, row, self.curCol) do
-            if row == self.curRow then
+        if pd.getButtonState() & pd.kButtonB > 0 then
+            ignoreB = true
+            self:findBlankCell(false)
+        else
+            drawCell(self.puz, self.curRow, self.curCol)
+            local row = self.curRow - 1
+            while not isLetterCell(self.puz, row, self.curCol) do
+                if row == self.curRow then
+                    row -= 1
+                    break
+                end
+
                 row -= 1
-                break
+                if row < 1 then
+                    row = self.puz.height
+                end
             end
 
-            row -= 1
-            if row < 1 then
-                row = self.puz.height
+            self.curRow = row
+            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+                self.curRow, self.curCol, self.across =
+                    findPrevWord(self.puz, self.curRow, self.curCol, self.across)
             end
+            self:displayCurrentCell(true)
+            self:setCurLetter()
         end
-
-        self.curRow = row
-        if not isLetterCell(self.puz, self.curRow, self.curCol) then
-            self.curRow, self.curCol, self.across =
-                findPrevWord(self.puz, self.curRow, self.curCol, self.across)
-        end
-        self:displayCurrentCell(true)
-        self:setCurLetter()
     elseif not pd.isCrankDocked() and self.allowCrank then
         local change, accel = pd.getCrankChange()
         if change ~= 0 then
@@ -210,6 +220,52 @@ function StatePlay:setCurLetter()
     else
         self.curLetter = 1
     end
+end
+
+function StatePlay:findBlankCell(nextBlank)
+    local puz = self.puz
+    local row, col = self.curRow, self.curCol
+    if nextBlank then
+        col += 1
+    else
+        col -= 1
+    end
+
+    while true do
+        if row == self.curRow and col == self.curCol then
+            break
+        end
+
+        if col > puz.width then
+            row += 1
+            col = 1
+        elseif col < 1 then
+            row -= 1
+            col = puz.width
+        end
+
+        if row > puz.height then
+            row = 1
+        elseif row < 1 then
+            row = puz.height
+        end
+
+        if puz.grid[row][col] == ' ' then
+            self.curRow, self.curCol = row, col
+            self:displayCurrentCell(true)
+            self:setCurLetter()
+            return
+        end
+
+        if nextBlank then
+            col += 1
+        else
+            col -= 1
+        end
+    end
+
+    pauseScrollTimer()
+    displayMessage('There are no blank spaces', 1)
 end
 
 function StatePlay:checkForErrors()
