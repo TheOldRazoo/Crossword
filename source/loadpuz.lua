@@ -158,10 +158,23 @@ function loadPuzzleInfo(name)
     local fileSize = pdfile.getSize(name)
     local fileData = file:read(fileSize)
     local puz = {}
+    puz.name = name
     puz.chksum = string.unpack("<I2", fileData, 1)
     puz.version = string.unpack("z", fileData, 25)
     puz.width = string.unpack("I1", fileData, 45)
     puz.height = string.unpack("I1", fileData, 46)
+
+    puz.solution = {}
+    local solutionRow = {}
+    local pos = 53
+    for i = 1, puz.height do
+        for j = 1, puz.width do
+            solutionRow[j], pos = string.unpack("c1", fileData, pos)
+        end
+
+        puz.solution[i] = solutionRow
+        solutionRow = {}
+    end
 
     local pos = 53 + puz.width * puz.height * 2
     puz.title, pos = string.unpack("z", fileData, pos)

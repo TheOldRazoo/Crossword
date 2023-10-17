@@ -294,7 +294,7 @@ function StatePlay:checkForErrors()
             msg = msg .. 's'
         end
     end
-    displayMessage(msg)
+    displayMessage(msg, 1)
 end
 
 function StatePlay:removeErrors()

@@ -210,10 +210,31 @@ function displayPuzzleInfo(row)
 
             if pd.file.exists(getSaveFileName(puzFiles[row]) .. '.json') then
                 infoY += puzzleInfoLineHeight * 2
-                font:drawText('* Saved Data *', puzzleInfoX, infoY)
+                if isPuzzleComplete(puz) then
+                    font:drawText('* Completed *', puzzleInfoX, infoY)
+                else
+                    font:drawText('* Saved Data *', puzzleInfoX, infoY)
+                end
             end
         end
     end
+end
+
+function isPuzzleComplete(puz)
+    restorePuzzle(puz)
+    if not puz.grid then
+        return false
+    end
+
+    for row = 1, puz.height do
+        for col = 1, puz.width do
+            if puz.solution[row][col] ~= puz.grid[row][col] then
+                return false
+            end
+        end
+    end
+
+    return true
 end
 
 function clearPuzzleInfoPane()
