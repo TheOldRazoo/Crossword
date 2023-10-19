@@ -98,4 +98,5 @@ v1.22 - add word length to clues
         corrected bug determining if word will fit on screen
         display number of errors removed
         puzzle selection screen enhanced to support Left/Right (parent/last puzzle)
+V1.30 - public release
 
