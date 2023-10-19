@@ -294,6 +294,7 @@ function StatePlay:checkForErrors()
             msg = msg .. 's'
         end
     end
+    pauseScrollTimer()
     displayMessage(msg, 4)
 end
 
@@ -309,6 +310,7 @@ function StatePlay:removeErrors()
         end
     end
 
+    pauseScrollTimer()
     if errs == 0 then
         displayMessage('No errors found', 1)
     else
