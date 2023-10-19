@@ -16,6 +16,8 @@ The Crossword app has two main screens.  1) the puzzle selection screen and
 Puzzle Selection Screen
 
 Up/Down     Select puzzle
+Left        Return to parent folder (if exists)
+Right       Open the last puzzle worked if it exists
 A           Open puzzle
 B           Delete puzzle (press 3 times to delete)
 
@@ -92,4 +94,8 @@ v1.12 - correct findNextWord and findPrevWord for down words - sometimes skipped
 v1.13 - implement B+Down/Up to find next/previous blank cell
 v1.20 - public release of fixes so far
 v1.21 - indicate completed puzzles on puzzle selection screen
+v1.22 - add word length to clues
+        corrected bug determining if word will fit on screen
+        display number of errors removed
+        puzzle selection screen enhanced to support Left/Right (parent/last puzzle)
 

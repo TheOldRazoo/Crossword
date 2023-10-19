@@ -55,7 +55,24 @@ function StatePuz:update()
         displayMessage(' ', 1)
         gridView:selectPreviousRow(true)
         displayPuzzleInfo(selectedRow())
-    elseif pd.buttonJustReleased(pd.kButtonA) then
+    elseif pd.buttonJustReleased(pd.kButtonLeft) then
+        if self.parentState then
+            stateManager:setCurrentState(self.parentState)
+            return
+        end
+    elseif pd.buttonJustReleased(pd.kButtonRight) then
+        local name = pd.datastore.read(lastPuzzleName)
+        if name then
+            local puz, err = loadPuzzleFile(name)
+            if puz then
+                restorePuzzle(puz)
+                statePlay:setPuzzle(puz)
+                stateManager:setCurrentState(statePlay)
+            else
+                displayMessage(err, 1)
+            end
+        end
+elseif pd.buttonJustReleased(pd.kButtonA) then
         self.deleteCount = 0
         local row = selectedRow()
 

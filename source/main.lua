@@ -12,6 +12,8 @@ import 'states/StatePuz'
 
 local firstTime = true
 
+lastPuzzleName = 'lastPuzzle'
+
 stateStart = StateStart()
 statePlay = StatePlay()
 stateManager = StateManager(stateStart)

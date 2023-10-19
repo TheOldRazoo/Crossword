@@ -112,6 +112,12 @@ function getScreenCoord(row, col)
     return x, y
 end
 
+function isCellOnScreen(row, col)
+    local x, y = getScreenCoord(row, col)
+    return x >= boardClipRect.x and x + cellWidth <= boardClipRect.width
+            and y >= boardClipRect.y and y + cellHeight <= boardClipRect.height
+end
+
 ---@param puz the current puzzle
 ---@param row the current cell row
 ---@param col the current cell col
@@ -142,7 +148,9 @@ function scrollToWord(puz, row, col, across)
             scrollToCell(startRowCol)
             scrollToCell(endRowCol)
         else
-            scrollToCell(fromRowCol(row, col))
+            if not isCellOnScreen(row, col) then
+                scrollToCell(fromRowCol(row, col))
+            end
         end
     end
 
@@ -181,12 +189,12 @@ function willWordFitOnScreen(startRowCol, endRowCol)
     local wordSize
     local startY, startX = toRowCol(startRowCol)
     local endY, endX = toRowCol(endRowCol)
-    if startX == endX then      -- is across word
-        wordSize = endX + cellWidth - startX
+    if startY == endY then      -- is across word
+        wordSize = (endX - startX + 1) * cellWidth
         return wordSize < boardClipRect.width
     end
 
-    wordSize = endY + cellHeight - startY
+    wordSize = (endY - startY + 1) * cellHeight
     return wordSize < boardClipRect.height
 end
 
@@ -226,18 +234,23 @@ end
 function displayClue(puz, row, col, across)
     local clue = nil
     local dir = nil
-    local startRowCol = findWord(puz, row, col, across)
-    local clueNum = getClueNumber(puz, toRowCol(startRowCol))
-    if across and needsAcrossNumber(puz, toRowCol(startRowCol)) then
+    local startRowCol, endRowCol = findWord(puz, row, col, across)
+    local startRow, startCol = toRowCol(startRowCol)
+    local endRow, endCol = toRowCol(endRowCol)
+    local clueNum = getClueNumber(puz, startRow, startCol)
+    local wordLen
+    if across and needsAcrossNumber(puz, startRow, startCol) then
         clue = getAcrossClue(puz, startRowCol)
         dir = 'a'
-    elseif not across and needsDownNumber(puz, toRowCol(startRowCol)) then
+        wordLen = endCol - startCol + 1
+    elseif not across and needsDownNumber(puz, startRow, startCol) then
         clue = getDownClue(puz, startRowCol)
         dir = 'd'
+        wordLen = endRow - startRow + 1
     end
 
     if clue then
-        clue = clueNum .. dir .. '. ' .. clue
+        clue = clueNum .. dir .. '. ' .. clue .. ' (' .. wordLen .. ')'
         displayMessage(clue)
     end
 end

@@ -294,20 +294,28 @@ function StatePlay:checkForErrors()
             msg = msg .. 's'
         end
     end
-    displayMessage(msg, 1)
+    displayMessage(msg, 4)
 end
 
 function StatePlay:removeErrors()
     local puz = self.puz
+    local errs = 0
     for row = 1, puz.height do
         for col = 1, puz.width do
-            if puz.grid[row][col] ~= puz.solution[row][col] then
+            if puz.grid[row][col] ~= ' ' and puz.grid[row][col] ~= puz.solution[row][col] then
                 puz.grid[row][col] = ' '
+                errs += 1
             end
         end
     end
-    drawBoard(puz)
-    self:displayCurrentCell(true)
+
+    if errs == 0 then
+        displayMessage('No errors found', 1)
+    else
+        drawBoard(puz)
+        self:displayCurrentCell(true)
+        displayMessage(errs .. ' error(s) removed', 4)
+    end
 end
 
 function StatePlay:exitPuzzle()
