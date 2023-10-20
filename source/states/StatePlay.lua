@@ -315,7 +315,7 @@ function StatePlay:removeErrors()
         displayMessage('No errors found', 1)
     else
         drawBoard(puz, false)
-        displayBoard()
+        self:displayCurrentCell(true)
         displayMessage(errs .. ' error(s) removed', 4)
     end
 end
