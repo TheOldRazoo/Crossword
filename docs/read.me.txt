@@ -100,4 +100,5 @@ v1.22 - add word length to clues
         puzzle selection screen enhanced to support Left/Right (parent/last puzzle)
 V1.30 - public release
 v1.31 - pause clue scroll timer when checking or removing errors
+        do not reset board origin after clearing errors
 

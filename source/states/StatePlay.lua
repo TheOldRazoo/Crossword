@@ -27,7 +27,7 @@ function StatePlay:enter(prevState)
     initScreen()
     gfx.clear()
     displayTitle(self.puz)
-    drawBoard(self.puz)
+    drawBoard(self.puz, true)
     displayBoard()
     displayClue(self.puz, self.curRow, self.curCol, true)
     self:displayCurrentCell(true)
@@ -314,8 +314,8 @@ function StatePlay:removeErrors()
     if errs == 0 then
         displayMessage('No errors found', 1)
     else
-        drawBoard(puz)
-        self:displayCurrentCell(true)
+        drawBoard(puz, false)
+        displayBoard()
         displayMessage(errs .. ' error(s) removed', 4)
     end
 end

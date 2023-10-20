@@ -82,8 +82,11 @@ function clearBoardScreen()
     gfx.setColor(color)
 end
 
-function drawBoard(puz)
-    resetBoardOrigin()
+function drawBoard(puz, resetOrigin)
+    if resetOrigin then
+        resetBoardOrigin()
+    end
+
     if boardImage == nil then
         boardImage = gfx.image.new(puz.width * cellWidth, puz.height * cellHeight)
     end
