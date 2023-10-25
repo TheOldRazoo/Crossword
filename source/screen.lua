@@ -58,7 +58,11 @@ function getCellImage(puz, row, col)
         end
 
         getLetterFont():drawTextAligned(puz.grid[row][col],
-            cellWidth // 2, borderWidth + 6, kTextAlignment.center)
+            cellWidth // 2, borderWidth + 4, kTextAlignment.center)
+
+        if puz.rebus_grid and (puz.rebus_grid[row][col] & 0x80) ~= 0 then
+            gfx.drawCircleAtPoint(cellWidth // 2, cellHeight // 2, cellWidth // 2 - 2)
+        end
     end
 
     gfx.unlockFocus()

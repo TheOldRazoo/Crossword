@@ -102,4 +102,6 @@ V1.30 - public release
 v1.31 - pause clue scroll timer when checking or removing errors
         do not reset board origin after clearing errors
 v1.32 - select current cell after removing errors
+v1.33 - added support for REBUS marked section - circle marked cells (experimental)
+        (to disable REBUS create a file or folder named 'norebus' in app data folder)
 

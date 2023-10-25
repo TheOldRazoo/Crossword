@@ -109,6 +109,10 @@ function loadPuzzleFile(name)
 
     puz.notes, pos = string.unpack("z", fileData, pos)
 
+    if not norebus then
+        pos = checkRebusGrid(puz, fileData, pos)
+    end
+
     local acrossClue, downClue = {}, {}
     local clueNum = 1
     local clueUsed = false
@@ -222,6 +226,29 @@ function getDownClue(puz, rowcol)
     end
 
     return ' '
+end
+
+function checkRebusGrid(puz, fileData, pos)
+    local gridSize = puz.width * puz.height
+    local ext
+    if #fileData - pos >= gridSize then
+        ext, pos = string.unpack("z", fileData, pos)
+        if string.sub(ext, 1, 4) == 'GEXT' then
+            puz.rebus_cksum, pos = string.unpack("<I2", fileData, pos)
+            local cksum = cksumRegion(fileData, pos, gridSize, 0)
+            puz.rebus_grid, rebus_row = {}, {}
+            for row = 1, puz.height do
+                for col = 1, puz.width do
+                    rebus_row[col], pos = string.unpack("B", fileData, pos)
+                end
+
+                puz.rebus_grid[row] = rebus_row
+                rebus_row = {}
+            end
+        end
+    end
+
+    return pos
 end
 
 -- determine if the passed cell needs an across clue number.

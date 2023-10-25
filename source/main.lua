@@ -13,6 +13,7 @@ import 'states/StatePuz'
 local firstTime = true
 
 lastPuzzleName = 'lastPuzzle'
+norebus = playdate.file.exists('norebus')
 
 stateStart = StateStart()
 statePlay = StatePlay()
