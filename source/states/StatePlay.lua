@@ -310,6 +310,7 @@ function StatePlay:removeErrors()
         end
     end
 
+    self:setCurLetter()
     pauseScrollTimer()
     if errs == 0 then
         displayMessage('No errors found', 1)
