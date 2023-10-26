@@ -4,6 +4,8 @@ local gfx <const> = pd.graphics
 
 local cellWidth <const> = 28
 local cellHeight <const> = 28
+local halfCellWidth <const> = cellWidth // 2
+local halfCellHeight <const> = cellHeight // 2
 local borderWidth <const> = 1
 
 local titleHeight = 18
@@ -58,10 +60,10 @@ function getCellImage(puz, row, col)
         end
 
         getLetterFont():drawTextAligned(puz.grid[row][col],
-            cellWidth // 2, borderWidth + 4, kTextAlignment.center)
+            halfCellWidth, borderWidth + 4, kTextAlignment.center)
 
         if rebus and puz.rebus_grid and (puz.rebus_grid[row][col] & 0x80) ~= 0 then
-            gfx.drawCircleAtPoint(cellWidth // 2, cellHeight // 2, cellWidth // 2 - 2)
+            gfx.drawCircleAtPoint(halfCellWidth, halfCellHeight, halfCellWidth - 2)
         end
     end
 
