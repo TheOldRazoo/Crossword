@@ -8,6 +8,10 @@ local gfx <const> = pd.graphics
 
 local letters <const> = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+local checkErrors <const> = "check errors"
+local clearErrors <const> = "clear errors"
+local showLetter <const> = "show letter"
+
 function StatePlay:init()
     StatePlay.super.init(self)
     self.puz = nil
@@ -15,10 +19,11 @@ end
 
 function StatePlay:enter(prevState)
     local menu = pd.getSystemMenu()
-    menu:addOptionsMenuItem('opt', {'check errors', 'clear errors'},
+    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter},
                 function(option)
-                    if option == 'check errors' then self:checkForErrors()
-                    elseif option == 'clear errors' then self:removeErrors()
+                    if option == checkErrors then self:checkForErrors()
+                    elseif option == clearErrors then self:removeErrors()
+                    elseif option == showLetter then self:showLetter()
                     end
                 end
             )
@@ -325,6 +330,12 @@ function StatePlay:removeErrors()
         self:displayCurrentCell(true)
         displayMessage(errs .. ' error(s) removed', 4)
     end
+end
+
+function StatePlay:showLetter()
+    self.puz.grid[self.curRow][self.curCol] = self.puz.solution[self.curRow][self.curCol]
+    drawCell(self.puz, self.curRow, self.curCol)
+    self:displayCurrentCell(true)
 end
 
 function StatePlay:setRebusOption(selected)

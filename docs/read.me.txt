@@ -104,4 +104,5 @@ v1.31 - pause clue scroll timer when checking or removing errors
 v1.32 - select current cell after removing errors
 v1.33 - added support for REBUS marked section - circle marked cells (experimental)
         (to disable a menu option is available)
+v1.34 - add 'show letter' menu option to fill in the current cell
 
