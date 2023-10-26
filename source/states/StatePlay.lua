@@ -15,8 +15,14 @@ end
 
 function StatePlay:enter(prevState)
     local menu = pd.getSystemMenu()
-    menu:addMenuItem('check errors', function() self:checkForErrors() end)
-    menu:addMenuItem('clear errors', function() self:removeErrors() end)
+    menu:addOptionsMenuItem('opt', {'check errors', 'clear errors'},
+                function(option)
+                    if option == 'check errors' then self:checkForErrors()
+                    elseif option == 'clear errors' then self:removeErrors()
+                    end
+                end
+            )
+    menu:addCheckmarkMenuItem('rebus', rebus, function(sel) self:setRebusOption(sel) end)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
     local startRowCol = findFirstWord(self.puz, true)
     self.curRow, self.curCol = toRowCol(startRowCol)
@@ -319,6 +325,13 @@ function StatePlay:removeErrors()
         self:displayCurrentCell(true)
         displayMessage(errs .. ' error(s) removed', 4)
     end
+end
+
+function StatePlay:setRebusOption(selected)
+    pd.datastore.write(selected, rebusName)
+    rebus = selected
+    drawBoard(self.puz, false)
+    self:displayCurrentCell(true)
 end
 
 function StatePlay:exitPuzzle()

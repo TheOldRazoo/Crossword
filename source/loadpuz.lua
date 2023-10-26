@@ -109,9 +109,7 @@ function loadPuzzleFile(name)
 
     puz.notes, pos = string.unpack("z", fileData, pos)
 
-    if not norebus then
-        pos = checkRebusGrid(puz, fileData, pos)
-    end
+    pos = checkRebusGrid(puz, fileData, pos)
 
     local acrossClue, downClue = {}, {}
     local clueNum = 1

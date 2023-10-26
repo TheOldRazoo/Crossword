@@ -13,7 +13,11 @@ import 'states/StatePuz'
 local firstTime = true
 
 lastPuzzleName = 'lastPuzzle'
-norebus = playdate.file.exists('norebus')
+rebusName = 'rebus'
+rebus = playdate.datastore.read(rebusName)
+if rebus == nil then
+    rebus = true
+end
 
 stateStart = StateStart()
 statePlay = StatePlay()
