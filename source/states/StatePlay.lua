@@ -236,6 +236,8 @@ end
 function StatePlay:findBlankCell(nextBlank)
     local puz = self.puz
     local row, col = self.curRow, self.curCol
+    drawCell(puz, row, col)
+
     if nextBlank then
         col += 1
     else
@@ -243,10 +245,6 @@ function StatePlay:findBlankCell(nextBlank)
     end
 
     while true do
-        if row == self.curRow and col == self.curCol then
-            break
-        end
-
         if col > puz.width then
             row += 1
             col = 1
@@ -259,6 +257,10 @@ function StatePlay:findBlankCell(nextBlank)
             row = 1
         elseif row < 1 then
             row = puz.height
+        end
+
+        if row == self.curRow and col == self.curCol then
+            break
         end
 
         if puz.grid[row][col] == ' ' then
