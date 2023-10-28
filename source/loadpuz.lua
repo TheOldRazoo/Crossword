@@ -11,7 +11,7 @@ local function cksumRegion(data, start, len, cksum)
             cksum = cksum >> 1
         end
 
-        cksum += string.unpack("b", data, start + i - 1)
+        cksum += string.unpack("B", data, start + i - 1)
     end
 
     return cksum
@@ -139,12 +139,11 @@ function loadPuzzleFile(name)
     puz.acrossClue = acrossClue
     puz.downClue = downClue
 
-    local cksum_cib = cksumRegion(fileData, 0x2d, 8, 0)
     local cksum = calcCheckSum(fileData, puz)
 
     file:close()
 
-    --if cksum_cib ~= puz.cksum_cib then
+    --if cksum ~= puz.chksum then
     --    return nil, "PUZ file checksum does not match, file may be corrupted"
     --end
 
