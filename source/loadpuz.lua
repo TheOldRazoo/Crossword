@@ -143,9 +143,9 @@ function loadPuzzleFile(name)
 
     file:close()
 
-    --if cksum ~= puz.chksum then
-    --    return nil, "PUZ file checksum does not match, file may be corrupted"
-    --end
+    if cksum ~= puz.chksum then
+        puz.err = "PUZ file checksum does not match, file may be corrupted"
+    end
 
     return puz, nil
 end
@@ -233,6 +233,9 @@ function checkRebusGrid(puz, fileData, pos)
         if string.sub(ext, 1, 4) == 'GEXT' then
             puz.rebus_cksum, pos = string.unpack("<I2", fileData, pos)
             local cksum = cksumRegion(fileData, pos, gridSize, 0)
+            if cksum ~= puz.rebus_cksum then
+                puz.err = "REBUS checksum does not match"
+            end
             puz.rebus_grid, rebus_row = {}, {}
             for row = 1, puz.height do
                 for col = 1, puz.width do

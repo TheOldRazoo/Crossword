@@ -42,6 +42,9 @@ function StatePlay:enter(prevState)
     displayBoard()
     displayClue(self.puz, self.curRow, self.curCol, true)
     self:displayCurrentCell(true)
+    if self.puz.err then
+        displayMessage(self.puz.err, 1)
+    end
 end
 
 function StatePlay:exit()

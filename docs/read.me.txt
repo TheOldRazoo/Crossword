@@ -106,4 +106,5 @@ v1.33 - added support for REBUS marked section - circle marked cells (experiment
         (to disable a menu option is available)
 v1.34 - add 'show letter' menu option to fill in the current cell
 v1.40 - public release
+v1.41 - enable file checksum validation but just display message, allow file to load
 
