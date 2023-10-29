@@ -37,6 +37,7 @@ end
 function StatePuz:enter(prevState)
     initScreen()
     clearScreen()
+    font:drawText(pd.metadata.version, 400 - font:getTextWidth(pd.metadata.version) - 2, 0)
     puzFiles = self:listPuzzleFiles()
     gridView:setNumberOfRows(#puzFiles)
     gridView:setSelection(1, 1, 1)
