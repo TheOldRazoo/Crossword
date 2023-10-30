@@ -100,7 +100,7 @@ elseif pd.buttonJustReleased(pd.kButtonA) then
         local row = selectedRow()
         if string.sub(puzFiles[row], 1, 5) == '/puz/' then
             displayMessage('Cannot delete builtin puzzle file', 1)
-        elseif pd.file.isdir(puzFiles[row]) then
+        elseif pd.file.isdir(puzFiles[row]) or puzFiles[row] == '..' then
             displayMessage('Cannot delete folders', 1)
         else
             self.deleteCount += 1
