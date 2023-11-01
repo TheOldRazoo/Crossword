@@ -20,7 +20,7 @@ local puzzleInfoY = gridY
 local puzzleInfoWidth = 400 - puzzleInfoX
 local puzzleInfoHeight = 240 - puzzleInfoY
 local puzzleInfoLineHeight = 14
-local font = getClueFont()
+local font = getListFont()
 local fontHeight = font:getHeight()
 local gridView = grid.new(gridWidth, font:getHeight() + 4)
 local displayGridView = false
@@ -49,12 +49,12 @@ end
 function StatePuz:update()
     if pd.buttonJustReleased(pd.kButtonDown) then
         self.deleteCount = 0
-        displayMessage(' ', 1)
+        displayListMessage(' ')
         gridView:selectNextRow(true, true, false)
         displayPuzzleInfo(selectedRow())
     elseif pd.buttonJustReleased(pd.kButtonUp) then
         self.deleteCount = 0
-        displayMessage(' ', 1)
+        displayListMessage(' ')
         gridView:selectPreviousRow(true)
         displayPuzzleInfo(selectedRow())
     elseif pd.buttonJustReleased(pd.kButtonLeft) then
@@ -71,7 +71,7 @@ function StatePuz:update()
                 statePlay:setPuzzle(puz)
                 stateManager:setCurrentState(statePlay)
             else
-                displayMessage(err, 1)
+                displayListMessage(err)
             end
         end
 elseif pd.buttonJustReleased(pd.kButtonA) then
@@ -94,19 +94,19 @@ elseif pd.buttonJustReleased(pd.kButtonA) then
             statePlay:setPuzzle(puz)
             stateManager:setCurrentState(statePlay)
         else
-            displayMessage(err, 1)
+            displayListMessage(err)
         end
     elseif pd.buttonJustReleased(pd.kButtonB) then
         local row = selectedRow()
         if string.sub(puzFiles[row], 1, 5) == '/puz/' then
-            displayMessage('Cannot delete builtin puzzle file', 1)
+            displayListMessage('Cannot delete builtin puzzle file')
         elseif pd.file.isdir(puzFiles[row]) or puzFiles[row] == '..' then
-            displayMessage('Cannot delete folders', 1)
+            displayListMessage('Cannot delete folders')
         else
             self.deleteCount += 1
             if self.deleteCount < 3 then
-                displayMessage('Delete ' .. puzFiles[selectedRow()] .. '  **'
-                        .. self.deleteCount .. '**', 1)
+                displayListMessage('Delete ' .. puzFiles[selectedRow()] .. '  **'
+                        .. self.deleteCount .. '**')
             else
                 pd.file.delete(puzFiles[row])
                 pd.file.delete(getSaveFileName(puzFiles[row]))
@@ -115,7 +115,7 @@ elseif pd.buttonJustReleased(pd.kButtonA) then
                 gridView:scrollToRow(1, false)
                 gridView:setSelectedRow(1)
                 displayGridView = true
-                displayMessage(' ', 1)
+                displayListMessage(' ')
                 clearPuzzleInfoPane()
             end
         end
@@ -194,9 +194,9 @@ function displayPuzzleInfo(row)
         return
     end
     clearPuzzleInfoPane()
-    displayMessage(' ', 1)
+    displayListMessage(' ')
     local file = puzFiles[row]
-    displayMessage(file, 1)
+    displayListMessage(file)
     gfx.setColor(color)
     gfx.setBackgroundColor(backgroundColor)
     if file == '..' then
@@ -260,4 +260,13 @@ function clearPuzzleInfoPane()
     gfx.setColor(backgroundColor)
     gfx.fillRect(puzzleInfoX, puzzleInfoY, puzzleInfoWidth, puzzleInfoHeight)
     gfx.setColor(color)
+end
+
+function displayListMessage(msg)
+    local color = gfx.getColor()
+    gfx.setColor(gfx.getBackgroundColor())
+    gfx.fillRect(0, 224, 400, 240)
+    gfx.setColor(color)
+    font:drawText(msg, 1, 224)
+
 end

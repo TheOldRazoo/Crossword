@@ -4,7 +4,8 @@ local gfx <const> = pd.graphics
 
 local tinyFont = gfx.font.new('fonts/Pico8')
 local letterFont = gfx.font.new('fonts/Roobert-11-Medium')
-local clueFont = gfx.font.new('fonts/Roobert-10-Bold')
+local clueFont = gfx.getSystemFont(gfx.font.kVariantBold)
+local listFont = gfx.font.new('fonts/Roobert-10-Bold')
 
 local menuImg = gfx.image.new('/images/menu')
 
@@ -18,6 +19,10 @@ end
 
 function getClueFont()
     return clueFont
+end
+
+function getListFont()
+    return listFont
 end
 
 function getMenuImage()

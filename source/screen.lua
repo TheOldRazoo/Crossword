@@ -2,8 +2,8 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local cellWidth <const> = 28
-local cellHeight <const> = 28
+local cellWidth <const> = 26
+local cellHeight <const> = 26
 local halfCellWidth <const> = cellWidth // 2
 local halfCellHeight <const> = cellHeight // 2
 local borderWidth <const> = 1
@@ -222,7 +222,7 @@ function displayMessage(msg, msgPos)
             clueTimerData.endPos = 380 - msgLen
             clueTimerData.msg = msg
             if clueScrollTimer == nil then
-                clueScrollTimer = pd.timer.keyRepeatTimerWithDelay(150, 150, clueTimer, clueTimerData)
+                clueScrollTimer = pd.timer.keyRepeatTimerWithDelay(170, 170, clueTimer, clueTimerData)
             else
                 clueScrollTimer:reset()
                 clueScrollTimer:start()
@@ -265,7 +265,7 @@ function displayClue(puz, row, col, across)
 end
 
 function displayTitle(puz)
-    getClueFont():drawText(puz.title .. ' by ' .. puz.author, 2, 2)
+    getListFont():drawText(puz.title .. ' by ' .. puz.author, 2, 2)
 end
 
 function rowcolToXY(rowcol)

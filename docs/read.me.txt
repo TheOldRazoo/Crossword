@@ -109,3 +109,5 @@ v1.40 - public release
 v1.41 - enable file checksum validation but just display message, allow file to load
 v1.42 - display version on puzzle selection screen
 v1.43 - catch attempt to delete parent folder
+v1.44 - reduce cell size from 28 to 26 to get more of the puzzle on screen
+v1.45 - increase font size used for clues and slightly slow scroll if long clues
