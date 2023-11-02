@@ -9,7 +9,7 @@ local halfCellHeight <const> = cellHeight // 2
 local borderWidth <const> = 1
 
 local titleHeight = 18
-local boardClipRect <const> = pd.geometry.rect.new(0, titleHeight, pd.display.getWidth(), 204)
+local boardClipRect <const> = pd.geometry.rect.new(0, titleHeight, pd.display.getWidth(), 200)
 local boardOrigin <const> =  { x = boardClipRect.x, y = boardClipRect.y }
 
 local boardImage = nil
@@ -234,9 +234,9 @@ function displayMessage(msg, msgPos)
 
     local color = gfx.getColor()
     gfx.setColor(gfx.getBackgroundColor())
-    gfx.fillRect(0, 224, 400, 240)
+    gfx.fillRect(0, 222, 400, 240)
     gfx.setColor(color)
-    getClueFont():drawText(msg, msgPos, 224)
+    getClueFont():drawText(msg, msgPos, 222)
 end
 
 -- across is true for across clue.  otherwise use down clue

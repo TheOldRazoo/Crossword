@@ -144,7 +144,7 @@ function loadPuzzleFile(name)
     file:close()
 
     if cksum ~= puz.chksum then
-        puz.err = "PUZ file checksum does not match, file may be corrupted"
+        puz.err = "File checksum does not match, file may be corrupted"
     end
 
     return puz, nil
