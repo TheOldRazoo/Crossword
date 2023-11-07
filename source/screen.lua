@@ -179,7 +179,7 @@ function scrollToCell(rowcol)
         boardOrigin.x = boardClipRect.width - (x + cellWidth)
     end
     if curY < boardClipRect.y then
-        boardOrigin.y = titleHeight - y - curY
+       boardOrigin.y = y + titleHeight
     end
     if curY + cellHeight > boardClipRect.height + titleHeight then
         boardOrigin.y = (boardClipRect.height + titleHeight) - (y + cellHeight)
@@ -191,7 +191,8 @@ function scrollToCell(rowcol)
     if boardOrigin.y > titleHeight then
         boardOrigin.y = titleHeight
     end
-    -- print(string.format('RowCol=%d Origin=(%d,%d)', rowcol, boardOrigin.x, boardOrigin.y))
+    print(string.format('RowCol=%d x=%d curX=%d y=%d curY=%d Origin=(%d,%d)',
+                        rowcol, x, curX, y, curY, boardOrigin.x, boardOrigin.y))
 end
 
 function willWordFitOnScreen(startRowCol, endRowCol)
@@ -219,7 +220,7 @@ function displayMessage(msg, msgPos)
         local msgLen = getClueFont():getTextWidth(msg)
         if msgLen > 399 then
             clueTimerData.currentPos = 1
-            clueTimerData.endPos = 380 - msgLen
+            clueTimerData.endPos = 250 - msgLen
             clueTimerData.msg = msg
             if clueScrollTimer == nil then
                 clueScrollTimer = pd.timer.keyRepeatTimerWithDelay(170, 170, clueTimer, clueTimerData)

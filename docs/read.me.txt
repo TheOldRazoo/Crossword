@@ -112,3 +112,5 @@ v1.44 - reduce cell size from 28 to 26 to get more of the puzzle on screen
         (this eliminates horizonal scrolling on 15x15 puzzles)
 v1.45 - increase font size used for clues and slightly slow scroll for long clues
 v1.50 - public release
+v1.51 = tweak clue scroll to allow tail end of message to be more easily read
+        error scrolling screen that did not always calculate top pos correctly
