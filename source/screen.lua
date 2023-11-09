@@ -175,11 +175,11 @@ function scrollToCell(rowcol)
     if curX < boardClipRect.x then
         boardOrigin.x = x - curX
     end
-    if curX + cellWidth > boardClipRect.width + boardOrigin.x then
+    if curX + cellWidth > boardClipRect.width then
         boardOrigin.x = boardClipRect.width - (x + cellWidth)
     end
     if curY < boardClipRect.y then
-       boardOrigin.y = y + titleHeight
+       boardOrigin.y = (curY - y) + titleHeight
     end
     if curY + cellHeight > boardClipRect.height + titleHeight then
         boardOrigin.y = (boardClipRect.height + titleHeight) - (y + cellHeight)
@@ -191,8 +191,8 @@ function scrollToCell(rowcol)
     if boardOrigin.y > titleHeight then
         boardOrigin.y = titleHeight
     end
-    print(string.format('RowCol=%d x=%d curX=%d y=%d curY=%d Origin=(%d,%d)',
-                        rowcol, x, curX, y, curY, boardOrigin.x, boardOrigin.y))
+    -- print(string.format('RowCol=%d x=%d curX=%d y=%d curY=%d Origin=(%d,%d)',
+    --                    rowcol, x, curX, y, curY, boardOrigin.x, boardOrigin.y))
 end
 
 function willWordFitOnScreen(startRowCol, endRowCol)
