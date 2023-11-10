@@ -11,6 +11,7 @@ local letters <const> = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 local checkErrors <const> = "check errors"
 local clearErrors <const> = "clear errors"
 local showLetter <const> = "show letter"
+local showWord <const> = "show word"
 
 function StatePlay:init()
     StatePlay.super.init(self)
@@ -19,11 +20,12 @@ end
 
 function StatePlay:enter(prevState)
     local menu = pd.getSystemMenu()
-    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter},
+    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter, showWord},
                 function(option)
                     if option == checkErrors then self:checkForErrors()
                     elseif option == clearErrors then self:removeErrors()
                     elseif option == showLetter then self:showLetter()
+                    elseif option == showWord then self:showWord()
                     end
                 end
             )
@@ -341,6 +343,26 @@ function StatePlay:showLetter()
     self.puz.grid[self.curRow][self.curCol] = self.puz.solution[self.curRow][self.curCol]
     drawCell(self.puz, self.curRow, self.curCol)
     self:displayCurrentCell(true)
+end
+
+function StatePlay:showWord()
+    local puz = self.puz
+    local startRowCol, endRowCol = findWord(puz, self.curRow,
+                                            self.curCol, self.across)
+    if startRowCol then
+        local row, col = toRowCol(startRowCol)
+        local endRow, endCol = toRowCol(endRowCol)
+        while (self.across and col <= endCol) or (not self.across and row <= endRow) do
+            puz.grid[row][col] = puz.solution[row][col]
+            if self.across then
+                col += 1
+            else
+                row += 1
+            end
+        end
+        drawBoard(self.puz, false)
+        self:displayCurrentCell(true)
+    end
 end
 
 function StatePlay:setRebusOption(selected)

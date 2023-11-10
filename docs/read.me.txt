@@ -114,4 +114,5 @@ v1.45 - increase font size used for clues and slightly slow scroll for long clue
 v1.50 - public release
 v1.51 - tweak clue scroll to allow tail end of message to be more easily read
         error scrolling screen that did not always calculate top pos correctly
-v.1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
+v1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
+v1.53 - added show word option to play menu
