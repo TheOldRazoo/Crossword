@@ -31,6 +31,8 @@ function StatePlay:enter(prevState)
             )
     menu:addCheckmarkMenuItem('rebus', rebus, function(sel) self:setRebusOption(sel) end)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
+    musicInit()
+    musicPlay()
     local startRowCol = findFirstWord(self.puz, true)
     self.curRow, self.curCol = toRowCol(startRowCol)
     self:setCurLetter()
@@ -52,6 +54,7 @@ end
 function StatePlay:exit()
     pd.getSystemMenu():removeAllMenuItems()
     self:savePuzzle()
+    musicStop()
 end
 
 local ignoreB = false

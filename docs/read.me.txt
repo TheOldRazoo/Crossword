@@ -74,6 +74,15 @@ Lite format.  They decided to stop doing that in 2021 or 2022, not sure exactly
 when.  At any rate I've providing a ZIP archive of most, if not all, of the NYT
 puzzles published in Across Lite.
 
+Playing background music
+Version 1.60 and higher support playing background music in the puzzle play screen.
+To enable this feature place one or more MP3 files in the following folder:
+
+Data -> com.bwit.crossword -> music
+
+If MP3 files exist in this folder one will randomly be selected each time you enter
+a puzzle and will play in the background.
+
 Please feel free to let me know if you encounter errors or uncover bugs in the
 app.
 
@@ -116,3 +125,4 @@ v1.51 - tweak clue scroll to allow tail end of message to be more easily read
         error scrolling screen that did not always calculate top pos correctly
 v1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
 v1.53 - added show word option to play menu
+v1.54 - added support for background music in the pyzzle play screen

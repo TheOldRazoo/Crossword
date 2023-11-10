@@ -6,6 +6,7 @@ import 'Utility/StateManager'
 import 'utility'
 import 'loadpuz'
 import 'screen'
+import 'music'
 import 'states/StateStart'
 import 'states/StatePlay'
 import 'states/StatePuz'
@@ -25,6 +26,7 @@ stateManager = StateManager(stateStart)
 
 function playdate.update()
     if firstTime then
+        math.randomseed(playdate.getSecondsSinceEpoch())
         playdate.setMenuImage(getMenuImage())
         firstTime = false
     end
