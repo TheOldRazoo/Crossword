@@ -179,7 +179,7 @@ function scrollToCell(rowcol)
         boardOrigin.x = boardClipRect.width - (x + cellWidth)
     end
     if curY < boardClipRect.y then
-       boardOrigin.y = (curY - y) + titleHeight
+       boardOrigin.y = (-y) + titleHeight
     end
     if curY + cellHeight > boardClipRect.height + titleHeight then
         boardOrigin.y = (boardClipRect.height + titleHeight) - (y + cellHeight)
