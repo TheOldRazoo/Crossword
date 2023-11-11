@@ -62,7 +62,7 @@ function getCellImage(puz, row, col)
         getLetterFont():drawTextAligned(puz.grid[row][col],
             halfCellWidth, borderWidth + 4, kTextAlignment.center)
 
-        if rebus and puz.rebus_grid and (puz.rebus_grid[row][col] & 0x80) ~= 0 then
+        if options.rebus and puz.rebus_grid and (puz.rebus_grid[row][col] & 0x80) ~= 0 then
             gfx.drawCircleAtPoint(halfCellWidth, halfCellHeight, halfCellWidth - 2)
         end
     end
