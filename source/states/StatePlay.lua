@@ -8,11 +8,14 @@ local gfx <const> = pd.graphics
 
 local letters <const> = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+local musicOn <const> = "music on"
+local musicOff <const> = "music off"
+
 local checkErrors <const> = "check errors"
 local clearErrors <const> = "clear errors"
 local showLetter <const> = "show letter"
 local showWord <const> = "show word"
-local musicOpt <const> = "toggle music"
+local musicOpt = ""
 
 
 function StatePlay:init()
@@ -21,19 +24,12 @@ function StatePlay:init()
 end
 
 function StatePlay:enter(prevState)
-    local menu = pd.getSystemMenu()
-    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter, showWord, musicOpt},
-                function(option)
-                    if option == checkErrors then self:checkForErrors()
-                    elseif option == clearErrors then self:removeErrors()
-                    elseif option == showLetter then self:showLetter()
-                    elseif option == showWord then self:showWord()
-                    elseif option == musicOpt then self:setMusicOption()
-                    end
-                end
-            )
-    menu:addCheckmarkMenuItem('rebus', options.rebus, function(sel) self:setRebusOption(sel) end)
-    menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
+    if options.playMusic then
+        musicOpt = musicOff
+    else
+        musicOpt = musicOn
+    end
+    self:addMenuItems()
     musicInit()
     if options.playMusic then
         musicPlay()
@@ -377,9 +373,14 @@ function StatePlay:setMusicOption()
     options.playMusic = not options.playMusic
     if options.playMusic then
         musicPlay()
+        musicOpt = musicOff
     else
         musicStop()
+        musicOpt = musicOn
     end
+
+    pd.getSystemMenu():removeAllMenuItems()
+    self:addMenuItems()
 end
 
 function StatePlay:setRebusOption(selected)
@@ -391,6 +392,22 @@ end
 function StatePlay:exitPuzzle()
     pauseScrollTimer()
     stateManager:setCurrentState(self.prevState)
+end
+
+function StatePlay:addMenuItems()
+    local menu = pd.getSystemMenu()
+    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter, showWord, musicOpt},
+                function(option)
+                    if option == checkErrors then self:checkForErrors()
+                    elseif option == clearErrors then self:removeErrors()
+                    elseif option == showLetter then self:showLetter()
+                    elseif option == showWord then self:showWord()
+                    elseif option == musicOpt then self:setMusicOption()
+                    end
+                end
+            )
+    menu:addCheckmarkMenuItem('rebus', options.rebus, function(sel) self:setRebusOption(sel) end)
+    menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
 end
 
 function StatePlay:savePuzzle()
