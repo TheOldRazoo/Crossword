@@ -451,7 +451,7 @@ end
 
 function savePuzzle(puz)
     pd.datastore.write(puz.grid, getSaveFileName(puz.name))
-    pd.datastore.write(puz.name, lastPuzzleName)
+    options.lastPuzzle = puz.name
 end
 
 function restorePuzzle(puz)

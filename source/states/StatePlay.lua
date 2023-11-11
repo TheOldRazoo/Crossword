@@ -12,6 +12,8 @@ local checkErrors <const> = "check errors"
 local clearErrors <const> = "clear errors"
 local showLetter <const> = "show letter"
 local showWord <const> = "show word"
+local musicOpt <const> = "toggle music"
+
 
 function StatePlay:init()
     StatePlay.super.init(self)
@@ -20,19 +22,22 @@ end
 
 function StatePlay:enter(prevState)
     local menu = pd.getSystemMenu()
-    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter, showWord},
+    menu:addOptionsMenuItem('opt', {checkErrors, clearErrors, showLetter, showWord, musicOpt},
                 function(option)
                     if option == checkErrors then self:checkForErrors()
                     elseif option == clearErrors then self:removeErrors()
                     elseif option == showLetter then self:showLetter()
                     elseif option == showWord then self:showWord()
+                    elseif option == musicOpt then self:setMusicOption()
                     end
                 end
             )
-    menu:addCheckmarkMenuItem('rebus', rebus, function(sel) self:setRebusOption(sel) end)
+    menu:addCheckmarkMenuItem('rebus', options.rebus, function(sel) self:setRebusOption(sel) end)
     menu:addMenuItem('exit puzzle', function() self:exitPuzzle() end )
     musicInit()
-    musicPlay()
+    if options.playMusic then
+        musicPlay()
+    end
     local startRowCol = findFirstWord(self.puz, true)
     self.curRow, self.curCol = toRowCol(startRowCol)
     self:setCurLetter()
@@ -52,9 +57,9 @@ function StatePlay:enter(prevState)
 end
 
 function StatePlay:exit()
+    musicStop()
     pd.getSystemMenu():removeAllMenuItems()
     self:savePuzzle()
-    musicStop()
 end
 
 local ignoreB = false
@@ -368,9 +373,17 @@ function StatePlay:showWord()
     end
 end
 
+function StatePlay:setMusicOption()
+    options.playMusic = not options.playMusic
+    if options.playMusic then
+        musicPlay()
+    else
+        musicStop()
+    end
+end
+
 function StatePlay:setRebusOption(selected)
-    pd.datastore.write(selected, rebusName)
-    rebus = selected
+    options.rebus = selected
     drawBoard(self.puz, false)
     self:displayCurrentCell(true)
 end

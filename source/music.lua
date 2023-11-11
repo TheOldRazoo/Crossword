@@ -1,12 +1,14 @@
 
 local musicDir <const> = '/music/'
 local filePlayer <const> = playdate.sound.fileplayer.new()
+local musicLoaded = false
 
 function musicInit()
     if not playdate.file.isdir(musicDir) then
         playdate.file.mkdir(musicDir)
     end
 
+    musicLoaded = false
     local musicFiles = playdate.file.listFiles(musicDir)
     if musicFiles and #musicFiles > 0 then
         local matchCount = 0
@@ -27,6 +29,7 @@ function musicInit()
 
             -- load the music file
             filePlayer:load(musicFiles[i])
+            musicLoaded = true
         end
     end
 
@@ -34,7 +37,7 @@ function musicInit()
 end
 
 function musicPlay()
-    if not filePlayer:isPlaying() then
+    if musicLoaded and not filePlayer:isPlaying() then
         filePlayer:play(0)
     end
 
@@ -42,7 +45,7 @@ function musicPlay()
 end
 
 function musicStop()
-    if filePlayer:isPlaying() then
+    if musicLoaded and filePlayer:isPlaying() then
         filePlayer:stop()
     end
 

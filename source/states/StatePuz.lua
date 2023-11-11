@@ -63,9 +63,8 @@ function StatePuz:update()
             return
         end
     elseif pd.buttonJustReleased(pd.kButtonRight) then
-        local name = pd.datastore.read(lastPuzzleName)
-        if name then
-            local puz, err = loadPuzzleFile(name)
+        if options.lastPuzzle then
+            local puz, err = loadPuzzleFile(options.lastPuzzle)
             if puz then
                 restorePuzzle(puz)
                 statePlay:setPuzzle(puz)

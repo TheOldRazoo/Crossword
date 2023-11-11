@@ -83,6 +83,12 @@ Data -> com.bwit.crossword -> music
 If MP3 files exist in this folder one will randomly be selected each time you enter
 a puzzle and will play in the background.
 
+Background music may be toggled on/off in the options menu.  This setting will be saved
+and remain in effect until changed.
+
+A nice selection of relaxing music is available at:
+https://pixabay.com/music/search/mood/relaxing/
+
 Please feel free to let me know if you encounter errors or uncover bugs in the
 app.
 

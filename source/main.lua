@@ -7,18 +7,14 @@ import 'utility'
 import 'loadpuz'
 import 'screen'
 import 'music'
+import 'options'
 import 'states/StateStart'
 import 'states/StatePlay'
 import 'states/StatePuz'
 
 local firstTime = true
 
-lastPuzzleName = 'lastPuzzle'
-rebusName = 'rebus'
-rebus = playdate.datastore.read(rebusName)
-if rebus == nil then
-    rebus = true
-end
+loadOptions()
 
 stateStart = StateStart()
 statePlay = StatePlay()
@@ -39,4 +35,6 @@ function playdate.gameWillTerminate()
     if stateManager:getCurrentState() == statePlay then
         statePlay:savePuzzle()
     end
+
+    saveOptions()
 end
