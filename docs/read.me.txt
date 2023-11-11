@@ -132,3 +132,4 @@ v1.51 - tweak clue scroll to allow tail end of message to be more easily read
 v1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
 v1.53 - added show word option to play menu
 v1.54 - added support for background music in the pyzzle play screen
+v1.60 - public release
