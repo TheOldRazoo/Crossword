@@ -56,9 +56,17 @@ Once connected your .puz files should be placed in the following folder:
 
 Data -> com.bwit.crossword -> puzzles
 
+If the game was installed from the play.date web site this folder may be named:
+
+Data -> user.xxxx.com.bwit.crossword -> puzzles
+
 Note that you can create sub folders to organize your puzzles if you so desire.  The
 puzzle selection screen will allow the hierarchy to be traversed to select the puzzle
 you wish to play.  Creating subfolders is not required.
+
+Panic's instructions for sideloading games can be found here:
+
+https://help.play.date/games/sideloading/
 
 This app will only work with valid Across Lite puzzle files.  These files contain
 internal checksums used to validate the integrity of the file.  I've found that a
@@ -131,5 +139,5 @@ v1.51 - tweak clue scroll to allow tail end of message to be more easily read
         error scrolling screen that did not always calculate top pos correctly
 v1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
 v1.53 - added show word option to play menu
-v1.54 - added support for background music in the pyzzle play screen
+v1.54 - added support for background music in the puzzle play screen
 v1.60 - public release
