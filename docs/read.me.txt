@@ -141,3 +141,6 @@ v1.52 - correct error on horizonal scrolling for puzzles > 15 cells wide
 v1.53 - added show word option to play menu
 v1.54 - added support for background music in the puzzle play screen
 v1.60 - public release
+v1.61 - added code to load rebus GRBS and RTBL entries if present.  these are not
+        handled now but are stored in puzzle storage for future use
+

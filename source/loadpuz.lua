@@ -110,6 +110,7 @@ function loadPuzzleFile(name)
     puz.notes, pos = string.unpack("z", fileData, pos)
 
     pos = checkRebusGrid(puz, fileData, pos)
+    pos = checkRebusMarkers(puz, fileData, pos)
 
     local acrossClue, downClue = {}, {}
     local clueNum = 1
@@ -226,6 +227,41 @@ function getDownClue(puz, rowcol)
 end
 
 function checkRebusGrid(puz, fileData, pos)
+    local gridSize = puz.width * puz.height
+    local ext, pos2, cksum
+    if #fileData - pos >= gridSize then
+        ext, pos2 = string.unpack("z", fileData, pos)
+        if string.sub(ext, 1, 4) == 'GRBS' then
+            puz.rebus_grid_cksum, pos2 = string.unpack("<I2", fileData, pos2)
+            cksum = cksumRegion(fileData, pos2, gridSize, 0)
+            if cksum ~= puz.rebus_grid_cksum then
+                puz.err = "REBUS grid checksum does not match"
+            end
+            puz.rebus_grbs_grid, rebus_row = {}, {}
+            for row = 1, puz.height do
+                for col = 1, puz.width do
+                    rebus_row[col], pos2 = string.unpack("B", fileData, pos2)
+                end
+
+                puz.rebus_grbs_grid[row] = rebus_row
+                rebus_row = {}
+            end
+
+            pos2 += 1   -- appears to be a binary zero byte at end of grid table
+            ext, pos2 = string.unpack("z", fileData, pos2)
+            if string.sub(ext, 1, 4) == 'RTBL' then
+                cksum, pos2 = string.unpack("<I2", fileData, pos2)
+                puz.rebus_rtbl, pos2 = string.unpack("z", fileData, pos2)
+            end
+
+            pos = pos2
+        end
+    end
+
+    return pos
+end
+
+function checkRebusMarkers(puz, fileData, pos)
     local gridSize = puz.width * puz.height
     local ext
     if #fileData - pos >= gridSize then
