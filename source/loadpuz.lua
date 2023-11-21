@@ -228,10 +228,10 @@ end
 
 function checkRebusGrid(puz, fileData, pos)
     local gridSize = puz.width * puz.height
-    local ext, pos2, cksum
+    local pos2, cksum
     if #fileData - pos >= gridSize then
-        ext, pos2 = string.unpack("z", fileData, pos)
-        if string.sub(ext, 1, 4) == 'GRBS' then
+        if string.sub(fileData, pos, pos + 3) == 'GRBS' then
+            pos2 = pos + 6      -- skip to checksum
             puz.rebus_grid_cksum, pos2 = string.unpack("<I2", fileData, pos2)
             cksum = cksumRegion(fileData, pos2, gridSize, 0)
             if cksum ~= puz.rebus_grid_cksum then
@@ -248,8 +248,8 @@ function checkRebusGrid(puz, fileData, pos)
             end
 
             pos2 += 1   -- appears to be a binary zero byte at end of grid table
-            ext, pos2 = string.unpack("z", fileData, pos2)
-            if string.sub(ext, 1, 4) == 'RTBL' then
+            if string.sub(fileData, pos2, pos2 + 3) == 'RTBL' then
+                pos2 += 6       -- skip to checksum
                 cksum, pos2 = string.unpack("<I2", fileData, pos2)
                 puz.rebus_rtbl, pos2 = string.unpack("z", fileData, pos2)
             end
@@ -265,8 +265,8 @@ function checkRebusMarkers(puz, fileData, pos)
     local gridSize = puz.width * puz.height
     local ext
     if #fileData - pos >= gridSize then
-        ext, pos = string.unpack("z", fileData, pos)
-        if string.sub(ext, 1, 4) == 'GEXT' then
+        if string.sub(fileData, pos, pos + 3) == 'GEXT' then
+            pos += 6    -- skip to checksum
             puz.rebus_cksum, pos = string.unpack("<I2", fileData, pos)
             local cksum = cksumRegion(fileData, pos, gridSize, 0)
             if cksum ~= puz.rebus_cksum then
