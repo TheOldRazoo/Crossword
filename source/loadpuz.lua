@@ -109,8 +109,8 @@ function loadPuzzleFile(name)
 
     puz.notes, pos = string.unpack("z", fileData, pos)
 
-    pos = checkRebusGrid(puz, fileData, pos)
     pos = checkRebusMarkers(puz, fileData, pos)
+    pos = checkRebusFlags(puz, fileData, pos)
 
     local acrossClue, downClue = {}, {}
     local clueNum = 1
@@ -226,12 +226,44 @@ function getDownClue(puz, rowcol)
     return ' '
 end
 
-function checkRebusGrid(puz, fileData, pos)
+--[[
+    This function processes the REBUS marker section of the file.  While
+    Literate Software document the REBUS entries for the text format of
+    a puzzle file I could find no documentation for how this data is
+    stored in the binary format.  As a result this information is a
+    result of my attempting to reverse engineer the format and may be
+    incomplete and/or incorrect.
+
+    The marker section, if present, immediately follows the notepad entry.
+    It is composed of two section labeled GRBS and RTBL as follows:
+
+    Label 'GBRS' length=4
+    Length of the GBRS entry - unsigned short integer length=2
+    Checksum of the grid unsigned short integer length=2
+    Marker grid one byte per cell length=puzzle width * puzzle height
+        0x00 = no RTBL entry for this cell
+        > 0x01 = RTBL entry
+            This value is the integer marker value plus one. For example:
+                1:XX; 9:BW; 36:YY
+            The three RTBL entries will be referenced as 0x01, 0x0a, 0x25
+            respectively.
+    Nil terminator length=1
+    Label 'RTBL' length=4
+    Length of the RTBL entry - unsigned short integer length=2
+    Zero terminated string of marker entries length=varies
+        The string is of the format:
+            marker:extended solution; marker:extended solution; etc.
+        The short solution is actually placed in the solution grid earlier
+        in the file.
+    Nil terminator length=1
+]]
+function checkRebusMarkers(puz, fileData, pos)
     local gridSize = puz.width * puz.height
-    local pos2, cksum
+    local pos2, cksum, len
     if #fileData - pos >= gridSize then
         if string.sub(fileData, pos, pos + 3) == 'GRBS' then
-            pos2 = pos + 6      -- skip to checksum
+            pos2 = pos + 4      -- skip label
+            len, pos2 = string.unpack("<I2", fileData, pos2)
             puz.rebus_grid_cksum, pos2 = string.unpack("<I2", fileData, pos2)
             cksum = cksumRegion(fileData, pos2, gridSize, 0)
             if cksum ~= puz.rebus_grid_cksum then
@@ -247,11 +279,17 @@ function checkRebusGrid(puz, fileData, pos)
                 rebus_row = {}
             end
 
-            pos2 += 1   -- appears to be a binary zero byte at end of grid table
+            pos2 += 1   -- binary zero byte at end of grid table
             if string.sub(fileData, pos2, pos2 + 3) == 'RTBL' then
-                pos2 += 6       -- skip to checksum
+                pos2 += 4       -- skip label
+                len, pos2 = string.unpack("<I2", fileData, pos2)
                 cksum, pos2 = string.unpack("<I2", fileData, pos2)
                 puz.rebus_rtbl, pos2 = string.unpack("z", fileData, pos2)
+                local rtbl_entry = {}
+                for marker, solution in string.gmatch(puz.rebus_rtbl, " *(%d+):(%a+);") do
+                    rtbl_entry[tonumber(marker)] = solution
+                end
+                puz.rtbl_entry = rtbl_entry
             end
 
             pos = pos2
@@ -261,12 +299,33 @@ function checkRebusGrid(puz, fileData, pos)
     return pos
 end
 
-function checkRebusMarkers(puz, fileData, pos)
+--[[
+    This function processes the REBUS flags section if present.  While
+    Literate Software document the REBUS entries for the text format of
+    a puzzle file I could find no documentation for how this data is
+    stored in the binary format.  As a result this information is a
+    result of my attempting to reverse engineer the format and may be
+    incomplete and/or incorrect.
+
+    The flags section, if present, immediately follows the RTBL section
+    (if present) or the notepad entry.  It is composed of one section labeled
+    GEXT as follows:
+
+    Label 'GEXT' length=4
+    Length of the GEXT entry - unsigned short integer length=2
+    Checksum of the grid unsigned short integer length=2
+        Flags grid one byte per cell length=puzzle width * puzzle height
+        0x00 = no flag entry for this cell
+        0x80 = this cell contains a REBUS flag
+    Nil terminator length=1
+]]
+function checkRebusFlags(puz, fileData, pos)
     local gridSize = puz.width * puz.height
-    local ext
+    local len
     if #fileData - pos >= gridSize then
         if string.sub(fileData, pos, pos + 3) == 'GEXT' then
-            pos += 6    -- skip to checksum
+            pos += 4    -- skip label
+            len, pos = string.unpack("<I2", fileData, pos)
             puz.rebus_cksum, pos = string.unpack("<I2", fileData, pos)
             local cksum = cksumRegion(fileData, pos, gridSize, 0)
             if cksum ~= puz.rebus_cksum then

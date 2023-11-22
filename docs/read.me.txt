@@ -143,4 +143,6 @@ v1.54 - added support for background music in the puzzle play screen
 v1.60 - public release
 v1.61 - added code to load rebus GRBS and RTBL entries if present.  these are not
         handled now but are stored in puzzle storage for future use
+v1.62 - document REBUS section in the load puzzle routines
+        process RTBL entries and store in puzzle storage for future enhancement
 

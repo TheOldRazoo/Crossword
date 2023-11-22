@@ -9,8 +9,8 @@ Created by Avalonian
 15x15
 <GRID>
      1ATE.2WASH.3WOL
-     LIES.cURIO.SHOE
-     ELECTORATE.SIZE
+     9IES.cURIO.SHOE
+     @LECTORATE.SIZE
      ASS.ERST.DIETED
      ...CENT.HOSTESS
      REFITS.JEWISH..
@@ -25,9 +25,11 @@ Created by Avalonian
      MERE.XENON.ABET
 <REBUS>
 MARK;
-1:CHI:C
-2:NU:N
-3:PHI:P
+1:CHI:L
+2:NU:A
+3:PHI:A
+9:BW:T
+@:XX:E
 <ACROSS>
 Destiny
 Above water, barely
