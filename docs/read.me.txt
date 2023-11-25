@@ -77,11 +77,6 @@ you to play.  If this proves to be a problem for folks I will issue a new versio
 the reinstates the checksum validation.  In that case files with bad checksums
 will refuse to open.
 
-Until the past few years the New York Times published their crosswords in Across
-Lite format.  They decided to stop doing that in 2021 or 2022, not sure exactly
-when.  At any rate I've providing a ZIP archive of most, if not all, of the NYT
-puzzles published in Across Lite.
-
 Playing background music
 Version 1.60 and higher support playing background music in the puzzle play screen.
 To enable this feature place one or more MP3 files in the following folder:
