@@ -545,7 +545,26 @@ function findPrevWord(puz, row, col, across)
 end
 
 function savePuzzle(puz)
-    pd.datastore.write(puz.grid, getSaveFileName(puz.name))
+    local needSave = false
+    for row = 1, puz.height do
+        for col = 1, puz.width do
+            if not (puz.grid[row][col] == ' ' or puz.grid[row][col] == '.') then
+                needSave = true
+                break
+            end
+        end
+
+        if needSave then
+            break
+        end
+    end
+
+    if needSave then
+        pd.datastore.write(puz.grid, getSaveFileName(puz.name))
+    else
+        pd.datastore.delete(getSaveFileName(puz.name))
+    end
+
     options.lastPuzzle = puz.name
 end
 

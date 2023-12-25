@@ -140,4 +140,5 @@ v1.61 - added code to load rebus GRBS and RTBL entries if present.  these are no
         handled now but are stored in puzzle storage for future use
 v1.62 - document REBUS section in the load puzzle routines
         process RTBL entries and store in puzzle storage for future enhancement
+v1.63 - do not save empty grid if no entries for puzzle
 

@@ -73,7 +73,7 @@ function StatePuz:update()
                 displayListMessage(err)
             end
         end
-elseif pd.buttonJustReleased(pd.kButtonA) then
+    elseif pd.buttonJustReleased(pd.kButtonA) then
         self.deleteCount = 0
         local row = selectedRow()
 
