@@ -47,6 +47,22 @@ function StatePuz:enter(prevState)
 end
 
 function StatePuz:update()
+    -- crank enhancement by Macoy Madson macoy@macoy.me
+    if not pd.isCrankDocked() then
+	   local change = pd.getCrankTicks(12)
+	   if change > 0 then
+		  self.deleteCount = 0
+		  displayListMessage(' ')
+		  gridView:selectNextRow(true, true, false)
+		  displayPuzzleInfo(selectedRow())
+	   elseif change < 0 then
+		  self.deleteCount = 0
+		  displayListMessage(' ')
+		  gridView:selectPreviousRow(true)
+		  displayPuzzleInfo(selectedRow())
+	   end
+	end
+    -- end enhancement
     if pd.buttonJustReleased(pd.kButtonDown) then
         self.deleteCount = 0
         displayListMessage(' ')

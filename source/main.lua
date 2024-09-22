@@ -1,6 +1,7 @@
 
 import 'CoreLibs/sprites'
 import 'CoreLibs/graphics'
+import 'CoreLibs/crank'
 import 'Utility/State'
 import 'Utility/StateManager'
 import 'utility'
