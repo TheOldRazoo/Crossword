@@ -143,5 +143,6 @@ v1.62 - document REBUS section in the load puzzle routines
 v1.63 - do not save empty grid if no entries for puzzle
 v1.64 - crank support added for puzzle lists by Macoy Madson
         crank enhancement to letter selection for puzzles by Macoy Madson
+v1.70 - public release
 
 
