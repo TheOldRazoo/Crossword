@@ -1,0 +1,10 @@
+name=Crossword
+author=Bob Withers
+description=Across Lite Crossword Player
+bundleID=com.bwit.crossword
+version=1.70
+buildNumber=37
+imagePath=/images
+launchSoundPath=/sounds
+pdxversion=20601
+buildtime=786802549

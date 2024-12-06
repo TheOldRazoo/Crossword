@@ -15,7 +15,7 @@ function musicInit()
         for i = 1, #musicFiles do
             if string.find(musicFiles[i], '%.[mM][pP]3$') then
                 musicFiles[i] = musicDir .. musicFiles[i]
-                matchCount += 1
+                matchCount = matchCount + 1
             else
                 musicFiles[i] = nil
             end
