@@ -94,3 +94,40 @@ function wrapText(text, font, width)
 
     return lines
 end
+
+-- Format a date/time string from a Playdate SDK time object
+function formatDateTime(dateTime, format)
+    local weekDays = {'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'}
+    local year = tostring(dateTime.year)
+    local month = tostring(dateTime.month)
+    local day = tostring(dateTime.day)
+    local hour = tostring(dateTime.hour)
+    local minute = tostring(dateTime.minute)
+    local second = tostring(dateTime.second)
+    local weekDay = weekDays[dateTime.weekday]
+
+    if string.len(month) < 2 then
+        month = '0' .. month
+    end
+    if string.len(day) < 2 then
+        day = '0' .. day
+    end
+    if string.len(hour) < 2 then
+        hour = '0' .. hour
+    end
+    if string.len(minute) < 2 then
+        minute = '0' .. minute
+    end
+    if string.len(second) < 2 then
+        second = '0' .. second
+    end
+
+    local result = string.gsub(format, '@year@', year)
+    result = string.gsub(result, '@month@', month)
+    result = string.gsub(result, '@day@', day)
+    result = string.gsub(result, '@hour@', hour)
+    result = string.gsub(result, '@minute@', minute)
+    result = string.gsub(result, '@second@', second)
+    result = string.gsub(result, '@weekday@', weekDay)
+    return result
+end

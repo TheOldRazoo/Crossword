@@ -33,6 +33,8 @@
     "playdate-debug.outputPath": "builds",
     "Lua.diagnostics.disable": [
         "lowercase-global",
-        "undefined-global"
+        "undefined-global",
+        "undefined-doc-name",
+        "need-check-nil"
     ]
 }

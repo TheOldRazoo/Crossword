@@ -42,6 +42,7 @@ end
 function drawCell(puz, row, col)
     local x, y = (col - 1) * cellWidth, (row - 1) * cellHeight
     local cell = getCellImage(puz, row, col)
+---@diagnostic disable-next-line: param-type-mismatch
     gfx.lockFocus(boardImage)
     cell:draw(x, y)
     gfx.unlockFocus()
@@ -111,6 +112,7 @@ end
 function displayBoard()
     setClipRect()
     clearBoardScreen()
+---@diagnostic disable-next-line: undefined-field
     boardImage:draw(boardOrigin.x, boardOrigin.y)
     gfx.clearClipRect()
 end
@@ -135,6 +137,7 @@ end
 function wordBoundingRect(puz, row, col, across)
     local startRowCol, endRowCol = findWord(puz, row, col, across)
     if not startRowCol then
+---@diagnostic disable-next-line: return-type-mismatch
         return nil
     end
 
@@ -146,6 +149,7 @@ function wordBoundingRect(puz, row, col, across)
     endY += cellHeight
 
     local rect = pd.geometry.rect.new(startX, startY, endX - startX, endY - startY)
+---@diagnostic disable-next-line: return-type-mismatch
     return rect
 end
 

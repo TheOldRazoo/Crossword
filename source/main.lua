@@ -4,6 +4,7 @@ import 'CoreLibs/graphics'
 import 'CoreLibs/crank'
 import 'Utility/State'
 import 'Utility/StateManager'
+import 'network'
 import 'utility'
 import 'loadpuz'
 import 'screen'
@@ -26,6 +27,7 @@ function playdate.update()
         math.randomseed(playdate.getSecondsSinceEpoch())
         playdate.setMenuImage(getMenuImage())
         firstTime = false
+        netTest()
     end
 
     playdate.timer.updateTimers()

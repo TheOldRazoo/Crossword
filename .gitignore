@@ -1,2 +1,6 @@
 *.pdx/**
 .DS_Store
+**/*.pdi
+**/*.pft
+**/*.pdz
+builds/**
