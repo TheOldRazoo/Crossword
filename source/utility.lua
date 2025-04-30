@@ -123,6 +123,7 @@ function formatDateTime(dateTime, format)
     end
 
     local result = string.gsub(format, '@year@', year)
+    result = string.gsub(result, '@year2@', string.sub(year, 3))
     result = string.gsub(result, '@month@', month)
     result = string.gsub(result, '@day@', day)
     result = string.gsub(result, '@hour@', hour)
