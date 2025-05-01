@@ -25,14 +25,21 @@ local fontHeight = font:getHeight()
 local gridView = grid.new(gridWidth, font:getHeight() + 4)
 local displayGridView = false
 local version = pd.metadata.version
+local skipInitialMessage = false
 
 local puzFiles
+
+function StatePuz:doDownloadPuzzles()
+    self.downloadPuzzles = true
+end
 
 function StatePuz:init(puzzleDir, parentState)
     StatePuz.super.init(self)
     self.puzzleDir = puzzleDir
     self.parentState = parentState
     self.deleteCount = 0
+    self.downloadPuzzles = false
+    skipInitialMessage = false
 end
 
 function StatePuz:enter(prevState)
@@ -44,9 +51,21 @@ function StatePuz:enter(prevState)
     gridView:setSelection(1, 1, 1)
     gridView:scrollToRow(1, false)
     gridView:setNumberOfSections(1)
+    pd.getSystemMenu():addMenuItem('puzzle dload', function() self:doDownloadPuzzles() end )
+end
+
+function StatePuz:exit()
+    pd.getSystemMenu():removeAllMenuItems()
 end
 
 function StatePuz:update()
+    if self.downloadPuzzles then
+        self.downloadPuzzles = false
+        displayMessage('Downloading puzzles...')
+        local log = checkPuzzleDownload(pd.getTime())
+        displayMessage(#log .. ' puzzle(s) downloaded')
+        skipInitialMessage = true
+    end
     -- crank enhancement by Macoy Madson macoy@macoy.me
     if not pd.isCrankDocked() then
 	   local change = pd.getCrankTicks(12)
@@ -169,7 +188,6 @@ function StatePuz:listPuzzleFiles()
     return puzFiles
 end
 
-
 function gridView:drawCell(section, row, col, selected, x, y, width, height)
     local c, b
     if selected then
@@ -278,10 +296,14 @@ function clearPuzzleInfoPane()
 end
 
 function displayListMessage(msg)
+    if skipInitialMessage then
+        skipInitialMessage = false
+        return
+    end
+
     local color = gfx.getColor()
     gfx.setColor(gfx.getBackgroundColor())
     gfx.fillRect(0, 224, 400, 240)
     gfx.setColor(color)
     font:drawText(msg, 1, 224)
-
 end

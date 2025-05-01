@@ -1,7 +1,7 @@
 
 local pd <const> = playdate
 
-local config = nil
+local config = {}
 local configName <const> = 'config'
 local log = {}
 
@@ -49,7 +49,14 @@ function downoadPuzzle(entry, puzDate)
         local port, useSSL, host, path = parseUrl(url)
         local http = pd.network.http.new(host, port, useSSL, 'Download Crosswords')
         if http then
-            local rc = http:get(url)
+            http:setReadTimeout(10)
+            local headers = {}
+            if entry.headers then
+                for s in string.gmatch(entry.headers, '([^^]+)') do
+                    table.insert(headers, s)
+                end
+            end
+            local rc = http:get(url, headers)
             if rc then
                 local statusCode = http:getResponseStatus()
                 while statusCode == 0 do
@@ -67,6 +74,14 @@ function downoadPuzzle(entry, puzDate)
                 print("Download progress: " .. bytesRead .. "/" .. bytesTotal)
                 local data = http:read(bytesTotal)
                 local filePath = buildPuzzlePath(entry.folder, fileName, puzDate, true)
+                if data and #data == bytesTotal then
+                    print("Download complete: " .. fileName)
+                else
+                    local msg = "Failed to download puzzle " .. fileName .. ": " .. statusCode
+                    print(msg)
+                    table.insert(log, msg)
+                    return
+                end
                 local file = pd.file.open(filePath, playdate.file.kFileWrite)
                 if file then
                     file:write(data)
@@ -155,10 +170,4 @@ function loadNetworkConfig()
     end
 
     config = pd.datastore.read(configName)
-end
-
-function netTest()
-    loadNetworkConfig()
-    checkPuzzleDownload()
-    exists = puzzleExists("puzzles", "puzzle_@year@-@month@-@day@.txt", pd.getTime())
 end

@@ -6,6 +6,7 @@ class('StateStart').extends(State)
 function StateStart:init()
     StateStart.super.init(self)
     self:createPuzzleDir()
+    loadNetworkConfig()
 end
 
 function StateStart:update()

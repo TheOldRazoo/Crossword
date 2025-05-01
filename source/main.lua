@@ -27,7 +27,6 @@ function playdate.update()
         math.randomseed(playdate.getSecondsSinceEpoch())
         playdate.setMenuImage(getMenuImage())
         firstTime = false
-        netTest()
     end
 
     playdate.timer.updateTimers()
