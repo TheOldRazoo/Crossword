@@ -18,19 +18,23 @@ local gridHeight = 212
 local puzzleInfoX = gridX + gridWidth + 8
 local puzzleInfoY = gridY
 local puzzleInfoWidth = 400 - puzzleInfoX
-local puzzleInfoHeight = 240 - puzzleInfoY
+local puzzleInfoHeight = 224 - puzzleInfoY
 local puzzleInfoLineHeight = 14
 local font = getListFont()
 local fontHeight = font:getHeight()
 local gridView = grid.new(gridWidth, font:getHeight() + 4)
 local displayGridView = false
 local version = pd.metadata.version
-local skipInitialMessage = false
+local skipInitialMessage = 0
 
 local puzFiles
 
 function StatePuz:doDownloadPuzzles()
     self.downloadPuzzles = true
+end
+
+function StatePuz:showLogFile()
+    stateManager:setCurrentState(StateShowLog(self.puzzleDir, self.parentState))
 end
 
 function StatePuz:init(puzzleDir, parentState)
@@ -39,7 +43,7 @@ function StatePuz:init(puzzleDir, parentState)
     self.parentState = parentState
     self.deleteCount = 0
     self.downloadPuzzles = false
-    skipInitialMessage = false
+    skipInitialMessage = 0
 end
 
 function StatePuz:enter(prevState)
@@ -51,7 +55,8 @@ function StatePuz:enter(prevState)
     gridView:setSelection(1, 1, 1)
     gridView:scrollToRow(1, false)
     gridView:setNumberOfSections(1)
-    pd.getSystemMenu():addMenuItem('puzzle dload', function() self:doDownloadPuzzles() end )
+    pd.getSystemMenu():addMenuItem('download puz', function() self:doDownloadPuzzles() end )
+    pd.getSystemMenu():addMenuItem('download log', function() self:showLogFile() end )
 end
 
 function StatePuz:exit()
@@ -61,10 +66,21 @@ end
 function StatePuz:update()
     if self.downloadPuzzles then
         self.downloadPuzzles = false
-        displayMessage('Downloading puzzles...')
-        local log = checkPuzzleDownload(pd.getTime())
-        displayMessage(#log .. ' puzzle(s) downloaded')
-        skipInitialMessage = true
+        displayListMessage('Downloading puzzles...')
+        local count, log = checkPuzzleDownload(pd.getTime())
+        if #log > 0 then
+            local logFile = pd.file.open('downloadlog.txt', playdate.file.kFileWrite)
+            for i = 1, #log do
+                logFile:write(log[i] .. '\n')
+            end
+            logFile:close()
+        end
+        displayListMessage('Downloaded ' .. count .. ' puzzle files(s)')
+        skipInitialMessage = 3
+        puzFiles = self:listPuzzleFiles()
+        gridView:setNumberOfRows(#puzFiles)
+        gridView:scrollToRow(1, false)
+        displayGridView = true
     end
     -- crank enhancement by Macoy Madson macoy@macoy.me
     if not pd.isCrankDocked() then
@@ -144,12 +160,13 @@ function StatePuz:update()
             else
                 pd.file.delete(puzFiles[row])
                 pd.file.delete(getSaveFileName(puzFiles[row]))
-                table.remove(puzFiles, row)
+                puzFiles = self:listPuzzleFiles()
                 gridView:setNumberOfRows(#puzFiles)
                 gridView:scrollToRow(1, false)
                 gridView:setSelectedRow(1)
                 displayGridView = true
                 displayListMessage(' ')
+                clearPuzzleList()
                 clearPuzzleInfoPane()
             end
         end
@@ -289,6 +306,12 @@ function isPuzzleComplete(puz)
     return true
 end
 
+function clearPuzzleList()
+    gfx.setColor(backgroundColor)
+    gfx.fillRect(gridX, gridY, gridWidth, gridHeight)
+    gfx.setColor(color)
+end
+
 function clearPuzzleInfoPane()
     gfx.setColor(backgroundColor)
     gfx.fillRect(puzzleInfoX, puzzleInfoY, puzzleInfoWidth, puzzleInfoHeight)
@@ -296,9 +319,11 @@ function clearPuzzleInfoPane()
 end
 
 function displayListMessage(msg)
-    if skipInitialMessage then
-        skipInitialMessage = false
-        return
+    if skipInitialMessage > 0 then
+        skipInitialMessage = skipInitialMessage - 1
+        if skipInitialMessage > 0 then
+            return
+        end
     end
 
     local color = gfx.getColor()

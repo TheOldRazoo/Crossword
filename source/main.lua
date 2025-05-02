@@ -11,6 +11,7 @@ import 'screen'
 import 'music'
 import 'options'
 import 'states/StateStart'
+import 'states/StateShowLog'
 import 'states/StatePlay'
 import 'states/StatePuz'
 

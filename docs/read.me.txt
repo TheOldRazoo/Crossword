@@ -92,8 +92,76 @@ and remain in effect until changed.
 A nice selection of relaxing music is available at:
 https://pixabay.com/music/search/mood/relaxing/
 
-Please feel free to let me know if you encounter errors or uncover bugs in the
-app.
+Downloading puzzles from the Internet
+Version 1.80 introduces the ability to download puzzle files via an Internet connection.  This action
+is invoked via the system menu 'download puz' from the puzzle list screen.  After a download the
+results can be viewed via the 'download log' menu item if desired.
+
+The puzzles downloaded are controlled via a configuration file stored in the apps data directory.  This
+is a JSON file named 'config.json' and will be created if it doesn't exist.  The default configuration
+sets up downloads for the following free puzzle sites:
+        Wall Street Journal
+        Universal Daily Crossword
+        Universal Sunday Crossword
+        The Washington Post
+        Jonesin' by Matt Jones
+
+The configuration file may be editied to enable/disable any of the existing download sites or add new ones.
+This file is a JSON file which represents an array of tables where each array entry is a single download
+site.  The format of each download site consists of the fillowing entries:
+
+        active:         If true the site will be processed otherwise it is ignored.
+        fileName:       The filename the puzzle will be stored under.
+        url:            The URL for the puzzle download site.
+        folder:         The folder these puzzles will be stored in.  The puzzles stored
+                        in the folder will be segregated by date.  For example, if the
+                        folder name is 'mypuz' an entry will be stored under this path
+                        if downloaded on April 20, 2025.
+                                mypuz/2025/04
+        dayOfWeek:      An array of seven boolean entries indicating the days of the week
+                        when the puzzle is available for download.  The first entry represents
+                        Monday.
+        headers:        A string containing any HTTP headers that should be attahced to the
+                        GET request for the puzzle data.  This string is of the format:
+                                hdr1: value1^hdr2: value2^hdr3: value3
+                        Each header is seperated by a caret (^) delimiter.  Headers are
+                        optional and can be omitted unless required by the site being used.
+
+The fileName and url entries may contain symbolic parameters that will be replaced at runtime with
+selected date values.  The paramteres currently available are:
+
+        @year@          The 4 digit year
+        @year2@         The 2 digit year
+        @month@         The 2 digit month
+        @day@           The 2 digit day of the month
+        @hour@          The 2 digit hour of the day
+        @minute@        The 2 digit minute of the hour
+        @second@        The 2 digit second of the minute
+        @weekday@       A single digit indicating the day of the week.  1 = Monday
+
+Following is an example entry for the Wall Street Journal site:
+
+	 {
+		"active":true,
+		"dayOfWeek": [
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false
+		],
+		"fileName":"wsj@year2@@month@@day@.puz",
+		"folder":"download/wsj",
+		"url":"https://herbach.dnsalias.com/wsj/wsj@year2@@month@@day@.puz"
+	}
+
+Currently puzzles are only downloaded for the current date.  I'd like to present a system where the
+downloads could be based on a user selected date but I need to think about how the user interface
+for this would work.
+
+Please feel free to let me know if you encounter errors, uncover bugs, or have suggestions.
 
 Bob Withers
 bwit@pobox.com
@@ -144,5 +212,5 @@ v1.63 - do not save empty grid if no entries for puzzle
 v1.64 - crank support added for puzzle lists by Macoy Madson
         crank enhancement to letter selection for puzzles by Macoy Madson
 v1.70 - public release
-
+v1.80 - publc release supporting puzzle file downloads
 

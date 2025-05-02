@@ -4,7 +4,10 @@ local pd <const> = playdate
 local config = {}
 local configName <const> = 'config'
 local log = {}
+local downloadCount = 0
 
+-- Format the date and time for the puzzle file name.
+-- The date is passed in as a playdate time object.
 local function buildPuzzlePath(folder, namePattern, puzDate, makePath)
     local fileName = formatDateTime(puzDate, namePattern)
     local year = formatDateTime(puzDate, '@year@')
@@ -17,11 +20,7 @@ local function buildPuzzlePath(folder, namePattern, puzDate, makePath)
     return filePath
 end
 
-local function puzzleExists(folder, namePattern, puzDate)
-    local filePath = buildPuzzlePath(folder, namePattern, puzDate)
-    return pd.file.exists(filePath)
-end
-
+-- Parse an HTTP URL and return the component parts.
 function parseUrl(url)
     local protocol = string.match(url, "^(%w+)://")
     local host = string.match(url, "://([^/]+)")
@@ -38,6 +37,7 @@ function parseUrl(url)
     return port, useSSL, host, path
 end
 
+-- Download a puzzle file if it doesn't already exist.
 function downoadPuzzle(entry, puzDate)
     local fileName = formatDateTime(puzDate, entry.fileName)
     local year = formatDateTime(puzDate, '@year@')
@@ -49,7 +49,7 @@ function downoadPuzzle(entry, puzDate)
         local port, useSSL, host, path = parseUrl(url)
         local http = pd.network.http.new(host, port, useSSL, 'Download Crosswords')
         if http then
-            http:setReadTimeout(10)
+            http:setReadTimeout(15)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -86,6 +86,7 @@ function downoadPuzzle(entry, puzDate)
                 if file then
                     file:write(data)
                     file:close()
+                    downloadCount = downloadCount + 1
                     local msg = "Puzzle downloaded and saved: " .. fileName
                     print(msg)
                     table.insert(log, msg)
@@ -102,12 +103,20 @@ function downoadPuzzle(entry, puzDate)
         end
         print("Downloading puzzle from: " .. url)
     else
-        print("Puzzle already exists: " .. filePath)
+        local msg = "Puzzle already exists: " .. fileName
+        print(msg)
+        table.insert(log, msg)
     end
 end
 
+-- Select active puzzle entries from the current configuratiob and
+-- attempt to download them.
+-- If puzDate is not provided, the current date will be used.
+-- The function returns a log of the download attempts.
+-- The log is a table of strings, each string is a message about the
 function checkPuzzleDownload(puzDate)
     log = {}
+    downloadCount = 0
     if not puzDate then
         puzDate = pd.getTime()
     end
@@ -117,7 +126,7 @@ function checkPuzzleDownload(puzDate)
         end
     end
 
-    return log
+    return downloadCount, log
 end
 
 -- URL configuration table entry formet.
@@ -164,10 +173,16 @@ local urlConfig <const> = {
     }
 }
 
+-- Load the network configuration.
 function loadNetworkConfig()
     if not pd.file.exists(configName .. '.json') then
         pd.datastore.write(urlConfig, configName, true)
     end
 
-    config = pd.datastore.read(configName)
+    local loadedConfig = pd.datastore.read(configName)
+    if loadedConfig then
+        config = loadedConfig
+    else
+        config = urlConfig
+    end
 end
