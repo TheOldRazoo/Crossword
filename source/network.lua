@@ -49,7 +49,7 @@ function downoadPuzzle(entry, puzDate)
         local port, useSSL, host, path = parseUrl(url)
         local http = pd.network.http.new(host, port, useSSL, 'Download Crosswords')
         if http then
-            http:setReadTimeout(15)
+            http:setReadTimeout(20)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -77,7 +77,11 @@ function downoadPuzzle(entry, puzDate)
                 if data and #data == bytesTotal then
                     print("Download complete: " .. fileName)
                 else
-                    local msg = "Failed to download puzzle " .. fileName .. ": " .. statusCode
+                    local reason = ''
+                    if statusCode == 200 then
+                        reason = ' (timeout)'
+                    end
+                    local msg = "Failed to download puzzle " .. fileName .. ": " .. statusCode .. reason
                     print(msg)
                     table.insert(log, msg)
                     return
