@@ -158,8 +158,10 @@ Following is an example entry for the Wall Street Journal site:
 	}
 
 Selecting a puzle download displays a calendar where the date of the download can be selected.  Initially
-the current date is selected but this cane be cahnged using right/left on the D-Pad.  When the appropiate
-date is selected, press the A button to initiate the download.
+the current date is selected but this cane be cahnged using right/left on the D-Pad.  The Up/Down buttons
+will move to the previous/next month.
+When the appropiate date is selected, press the A button to initiate the download or the B button to exit
+without dlownloading.
 
 The calendar generation code being used is a slightly modified version of a release by Guilherme Brisson.
         https://github.com/guiBrisson/lua-calendar

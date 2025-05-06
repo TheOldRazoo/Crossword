@@ -75,7 +75,7 @@ function downoadPuzzle(entry, puzDate)
                 end
                 print("HTTP status code: " .. statusCode)
                 if statusCode ~= 200 then
-                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode .. ' ' .. http:getError()
+                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode   -- .. ' ' .. http:getError() or ''
                     print(msg)
                     table.insert(log, msg)
                     return

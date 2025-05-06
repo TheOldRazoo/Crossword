@@ -86,6 +86,7 @@ local function displayScreen(self)
         end
     end
     showCursor(self)
+    displayMessage('Select date.  Press (A) to download, (B) to exit.')
 end
 
 local function moveCursor(self, offset)
@@ -121,6 +122,26 @@ function StateDownload:update()
         moveCursor(self, 1)
     elseif pd.buttonJustReleased(pd.kButtonLeft) then
         moveCursor(self, -1)
+    elseif pd.buttonJustReleased(pd.kButtonUp) then
+        self.currDate.month = self.currDate.month - 1
+        if self.currDate.month < 1 then
+            self.currDate.year = self.currDate.year - 1
+            self.currDate.month = 12
+        end
+        self.currDate.day = 1
+        self.grid = calendar:generateMonth(self.currDate.year, self.currDate.month)
+        displayScreen(self)
+    elseif pd.buttonJustReleased(pd.kButtonDown) then
+        self.currDate.month = self.currDate.month + 1
+        if self.currDate.month > 12 then
+            self.currDate.year = self.currDate.year + 1
+            self.currDate.month = 1
+        end
+        self.currDate.day = 1
+        self.grid = calendar:generateMonth(self.currDate.year, self.currDate.month)
+        displayScreen(self)
+    elseif pd.buttonJustReleased(pd.kButtonB) then
+        stateManager:setCurrentState(self.prevState)
     elseif pd.buttonJustReleased(pd.kButtonA) then
         displayListMessage('Downloading puzzles...')
         local count, log = checkPuzzleDownload(self.currDate)
