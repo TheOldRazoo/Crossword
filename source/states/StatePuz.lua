@@ -57,6 +57,11 @@ function StatePuz:enter(prevState)
     gridView:setNumberOfSections(1)
     pd.getSystemMenu():addMenuItem('download puz', function() self:doDownloadPuzzles() end )
     pd.getSystemMenu():addMenuItem('download log', function() self:showLogFile() end )
+    if self.downloadMessage then
+        displayMessage(self.downloadMessage)
+        self.downloadMessage = nil
+        skipInitialMessage = 3
+    end
 end
 
 function StatePuz:exit()
@@ -66,21 +71,8 @@ end
 function StatePuz:update()
     if self.downloadPuzzles then
         self.downloadPuzzles = false
-        displayListMessage('Downloading puzzles...')
-        local count, log = checkPuzzleDownload(pd.getTime())
-        if #log > 0 then
-            local logFile = pd.file.open('downloadlog.txt', playdate.file.kFileWrite)
-            for i = 1, #log do
-                logFile:write(log[i] .. '\n')
-            end
-            logFile:close()
-        end
-        displayListMessage('Downloaded ' .. count .. ' puzzle files(s)')
-        skipInitialMessage = 3
-        puzFiles = self:listPuzzleFiles()
-        gridView:setNumberOfRows(#puzFiles)
-        gridView:scrollToRow(1, false)
-        displayGridView = true
+        stateManager:setCurrentState(StateDownload())
+        return
     end
     -- crank enhancement by Macoy Madson macoy@macoy.me
     if not pd.isCrankDocked() then
@@ -324,9 +316,7 @@ function displayListMessage(msg)
         if skipInitialMessage > 0 then
             return
         end
-    end
-
-    local color = gfx.getColor()
+    end    local color = gfx.getColor()
     gfx.setColor(gfx.getBackgroundColor())
     gfx.fillRect(0, 224, 400, 240)
     gfx.setColor(color)

@@ -157,9 +157,37 @@ Following is an example entry for the Wall Street Journal site:
 		"url":"https://herbach.dnsalias.com/wsj/wsj@year2@@month@@day@.puz"
 	}
 
-Currently puzzles are only downloaded for the current date.  I'd like to present a system where the
-downloads could be based on a user selected date but I need to think about how the user interface
-for this would work.
+Selecting a puzle download displays a calendar where the date of the download can be selected.  Initially
+the current date is selected but this cane be cahnged using right/left on the D-Pad.  When the appropiate
+date is selected, press the A button to initiate the download.
+
+The calendar generation code being used is a slightly modified version of a release by Guilherme Brisson.
+        https://github.com/guiBrisson/lua-calendar
+Following is the license for this code.
+
+-----------------------------------------------------------------------------------------------------------
+MIT License
+
+Copyright (c) 2025 Guilherme Brisson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-----------------------------------------------------------------------------------------------------------
 
 Please feel free to let me know if you encounter errors, uncover bugs, or have suggestions.
 
@@ -213,4 +241,4 @@ v1.64 - crank support added for puzzle lists by Macoy Madson
         crank enhancement to letter selection for puzzles by Macoy Madson
 v1.70 - public release
 v1.80 - publc release supporting puzzle file downloads
-
+v1.90 - public release with ability to select puzzle download date

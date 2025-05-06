@@ -1,9 +1,12 @@
 
+import 'CoreLibs/object'
+import 'CoreLibs/ui'
 import 'CoreLibs/sprites'
 import 'CoreLibs/graphics'
 import 'CoreLibs/crank'
 import 'Utility/State'
 import 'Utility/StateManager'
+import 'Calendar'
 import 'network'
 import 'utility'
 import 'loadpuz'
@@ -14,6 +17,7 @@ import 'states/StateStart'
 import 'states/StateShowLog'
 import 'states/StatePlay'
 import 'states/StatePuz'
+import 'states/StateDownload'
 
 local firstTime = true
 

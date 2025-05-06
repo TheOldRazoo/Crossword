@@ -46,17 +46,27 @@ function downoadPuzzle(entry, puzDate)
 
     if not pd.file.exists(filePath) then
         local url = formatDateTime(puzDate, entry.url)
+        local fileName = formatDateTime(puzDate, entry.fileName)
         local port, useSSL, host, path = parseUrl(url)
-        local http = pd.network.http.new(host, port, useSSL, 'Download Crosswords')
+        print("Host/ssl/port: " .. host ..'/' .. tostring(useSSL) .. '/' .. port)
+        if not host or not path then
+            local msg = "Invalid URL: " .. url
+            print(msg)
+            table.insert(log, msg)
+            return
+        end
+        table.insert(log, "URL: " .. url)
+        local http = pd.network.http.new(host, port, useSSL, 'Download Puzzles')
         if http then
-            http:setReadTimeout(20)
+            http:setConnectTimeout(20)
+--            http:setReadBufferSize(5120)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
                     table.insert(headers, s)
                 end
             end
-            local rc = http:get(url, headers)
+            local rc, errMsg = http:get(url, headers)
             if rc then
                 local statusCode = http:getResponseStatus()
                 while statusCode == 0 do
@@ -65,18 +75,21 @@ function downoadPuzzle(entry, puzDate)
                 end
                 print("HTTP status code: " .. statusCode)
                 if statusCode ~= 200 then
-                    local msg = "Failed to download puzzle " .. fileName .. ": " .. statusCode
+                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode .. ' ' .. http:getError()
                     print(msg)
                     table.insert(log, msg)
                     return
                 end
                 local bytesRead, bytesTotal = http:getProgress()
-                print("Download progress: " .. bytesRead .. "/" .. bytesTotal)
+                print("Download progress: " .. bytesRead .. "/" .. bytesTotal .. ' bytes')
+                http:setReadTimeout(20)
                 local data = http:read(bytesTotal)
+--                http:close()
                 local filePath = buildPuzzlePath(entry.folder, fileName, puzDate, true)
                 if data and #data == bytesTotal then
                     print("Download complete: " .. fileName)
                 else
+                    table.insert(log, 'Downloaded ' .. bytesRead .. ' of ' .. bytesTotal .. ' bytes')
                     local reason = ''
                     if statusCode == 200 then
                         reason = ' (timeout)'
@@ -100,9 +113,16 @@ function downoadPuzzle(entry, puzDate)
                 print(msg)
                 table.insert(log, msg)
                 return
+            else
+                local msg = 'Unable to queue get request (' .. errMsg .. ')'
+                print(msg)
+                table.insert(log, msg)
+                http:close()
             end
         else
-            print("Failed to create HTTP object")
+            local msg = "Failed to create HTTP object"
+            print(msg)
+            table.insert(log, msg)
             return
         end
         print("Downloading puzzle from: " .. url)
