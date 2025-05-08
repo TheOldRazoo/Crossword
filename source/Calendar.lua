@@ -64,7 +64,7 @@ local function getFirstWeekDay(year, month)
 end
 
 function Calendar:generateMonth(year, month, weekStart)
-    weekStart = weekStart or 0
+    weekStart = weekStart or 0          -- 0 indicates Sunday
     local firstWeekday = getFirstWeekDay(year, month)
     local daysInMonth = getDaysInMonth(year, month)
     local monthGrid = {}

@@ -58,7 +58,7 @@ function StatePuz:enter(prevState)
     pd.getSystemMenu():addMenuItem('download puz', function() self:doDownloadPuzzles() end )
     pd.getSystemMenu():addMenuItem('download log', function() self:showLogFile() end )
     if self.downloadMessage then
-        displayMessage(self.downloadMessage)
+        displayListMessage(self.downloadMessage)
         self.downloadMessage = nil
         skipInitialMessage = 3
     end

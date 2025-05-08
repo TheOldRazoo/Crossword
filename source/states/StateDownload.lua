@@ -86,7 +86,7 @@ local function displayScreen(self)
         end
     end
     showCursor(self)
-    displayMessage('Select date.  Press (A) to download, (B) to exit.')
+    displayListMessage('Select date.  Press (A) to download, (B) to exit.')
 end
 
 local function moveCursor(self, offset)

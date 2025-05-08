@@ -21,7 +21,8 @@ local function buildPuzzlePath(folder, namePattern, puzDate, makePath)
 end
 
 -- Parse an HTTP URL and return the component parts.
-function parseUrl(url)
+-- Returns: port, useSSL, host, path
+local function parseUrl(url)
     local protocol = string.match(url, "^(%w+)://")
     local host = string.match(url, "://([^/]+)")
     local path = string.match(url, "://[^/]+(/.*)")
@@ -59,7 +60,7 @@ function downoadPuzzle(entry, puzDate)
         local http = pd.network.http.new(host, port, useSSL, 'Download Puzzles')
         if http then
             http:setConnectTimeout(20)
---            http:setReadBufferSize(5120)
+            http:setReadBufferSize(5120)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -75,7 +76,7 @@ function downoadPuzzle(entry, puzDate)
                 end
                 print("HTTP status code: " .. statusCode)
                 if statusCode ~= 200 then
-                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode   -- .. ' ' .. http:getError() or ''
+                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode .. ' ' .. (http:getError() or '')
                     print(msg)
                     table.insert(log, msg)
                     return
@@ -84,7 +85,7 @@ function downoadPuzzle(entry, puzDate)
                 print("Download progress: " .. bytesRead .. "/" .. bytesTotal .. ' bytes')
                 http:setReadTimeout(20)
                 local data = http:read(bytesTotal)
---                http:close()
+                http:close()
                 local filePath = buildPuzzlePath(entry.folder, fileName, puzDate, true)
                 if data and #data == bytesTotal then
                     print("Download complete: " .. fileName)

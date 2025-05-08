@@ -31,7 +31,7 @@ function StateShowLog:update()
             displayMessage('No log file found')
         end
 
-        displayMessage('Press A to return to puzzle list')
+        displayListMessage('Press A to return to puzzle list')
     end
 
     if playdate.buttonJustReleased(playdate.kButtonA) then

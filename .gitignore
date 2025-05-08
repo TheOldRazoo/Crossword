@@ -4,3 +4,5 @@
 **/*.pft
 **/*.pdz
 builds/**
+builds/Crossword.pdx/main.pdz
+builds/Crossword.pdx/pdxinfo
