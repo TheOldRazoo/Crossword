@@ -60,7 +60,7 @@ function downoadPuzzle(entry, puzDate)
         local http = pd.network.http.new(host, port, useSSL, 'Download Puzzles')
         if http then
             http:setConnectTimeout(20)
-            http:setReadBufferSize(5120)
+            http:setReadBufferSize(8192)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -147,6 +147,7 @@ function checkPuzzleDownload(puzDate)
     end
     for i, entry in ipairs(config) do
         if entry.active and entry.dayOfWeek[puzDate.weekday] then
+            displayListMessage('Downloading puzzles: ' .. entry.folder)
             downoadPuzzle(entry, puzDate)
         end
     end

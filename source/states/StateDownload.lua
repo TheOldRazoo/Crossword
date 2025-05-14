@@ -108,6 +108,12 @@ local function moveCursor(self, offset)
         self.currDate.day = lastDayForMonth(self)
     end
     self.grid = calendar:generateMonth(self.currDate.year, self.currDate.month)
+    local row, col = findDay(self, self.currDate.day)
+    if col == 1 then
+        self.currDate.weekday = 7
+    else
+        self.currDate.weekday = col - 1
+    end
     displayScreen(self)
 end
 
