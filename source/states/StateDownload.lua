@@ -150,7 +150,7 @@ function StateDownload:update()
         stateManager:setCurrentState(self.prevState)
     elseif pd.buttonJustReleased(pd.kButtonA) then
         displayListMessage('Downloading puzzles...')
-        local count, log = checkPuzzleDownload(self.currDate)
+        local count, attempts, log = checkPuzzleDownload(self.currDate)
         if #log > 0 then
             local logFile = pd.file.open('downloadlog.txt', playdate.file.kFileWrite)
             for i = 1, #log do
@@ -158,7 +158,7 @@ function StateDownload:update()
             end
             logFile:close()
         end
-        self.prevState.downloadMessage = 'Downloaded ' .. count .. ' puzzle file(s)'
+        self.prevState.downloadMessage = 'Downloaded ' .. count .. ' of ' .. attempts .. ' puzzle file(s)'
         stateManager:setCurrentState(self.prevState)
     end
 end

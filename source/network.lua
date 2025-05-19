@@ -141,6 +141,7 @@ end
 -- The log is a table of strings, each string is a message about the
 function checkPuzzleDownload(puzDate)
     log = {}
+    local downloadAttempt = 0
     downloadCount = 0
     if not puzDate then
         puzDate = pd.getTime()
@@ -148,11 +149,12 @@ function checkPuzzleDownload(puzDate)
     for i, entry in ipairs(config) do
         if entry.active and entry.dayOfWeek[puzDate.weekday] then
             displayListMessage('Downloading puzzles: ' .. entry.folder)
+            downloadAttempt = downloadAttempt + 1
             downoadPuzzle(entry, puzDate)
         end
     end
 
-    return downloadCount, log
+    return downloadCount, downloadAttempt, log
 end
 
 -- URL configuration table entry formet.
