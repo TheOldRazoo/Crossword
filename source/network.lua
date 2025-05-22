@@ -5,6 +5,7 @@ local config = {}
 local configName <const> = 'config'
 local log = {}
 local downloadCount = 0
+local downloadAttempt = 0
 
 -- Format the date and time for the puzzle file name.
 -- The date is passed in as a playdate time object.
@@ -60,7 +61,8 @@ function downoadPuzzle(entry, puzDate)
         local http = pd.network.http.new(host, port, useSSL, 'Download Puzzles')
         if http then
             http:setConnectTimeout(20)
-            http:setReadBufferSize(8192)
+--          setReadBufferSize causing crash under 2.7.3
+--            http:setReadBufferSize(8192)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -90,6 +92,7 @@ function downoadPuzzle(entry, puzDate)
                 if data and #data == bytesTotal then
                     print("Download complete: " .. fileName)
                 else
+                    bytesRead, bytesTotal = http:getProgress()
                     table.insert(log, 'Downloaded ' .. bytesRead .. ' of ' .. bytesTotal .. ' bytes')
                     local reason = ''
                     if statusCode == 200 then
@@ -131,6 +134,7 @@ function downoadPuzzle(entry, puzDate)
         local msg = "Puzzle already exists: " .. fileName
         print(msg)
         table.insert(log, msg)
+        downloadAttempt = downloadAttempt - 1
     end
 end
 
@@ -141,7 +145,7 @@ end
 -- The log is a table of strings, each string is a message about the
 function checkPuzzleDownload(puzDate)
     log = {}
-    local downloadAttempt = 0
+    downloadAttempt = 0
     downloadCount = 0
     if not puzDate then
         puzDate = pd.getTime()
