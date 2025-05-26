@@ -6,6 +6,17 @@ local configName <const> = 'config'
 local log = {}
 local downloadCount = 0
 local downloadAttempt = 0
+local httpStatusMessages = {
+    [400] = "Bad Request",
+    [401] = "Unauthorized",
+    [403] = "Forbidden",
+    [404] = "Not Found",
+    [500] = "Internal Server Error",
+    [502] = "Bad Gateway",
+    [503] = "Service Unavailable",
+    [504] = "Gateway Timeout",
+    [511] = "Authentication Required"
+}
 
 -- Format the date and time for the puzzle file name.
 -- The date is passed in as a playdate time object.
@@ -66,6 +77,10 @@ local function readHttpResponse(http, bytesTotal, timeout)
     return data
 end
 
+local function httpErrorMsg(statusCode)
+    return httpStatusMessages[statusCode] or ''
+end
+
 -- Download a puzzle file if it doesn't already exist.
 function downoadPuzzle(entry, puzDate)
     local fileName = formatDateTime(puzDate, entry.fileName)
@@ -103,7 +118,7 @@ function downoadPuzzle(entry, puzDate)
                 end
                 print("HTTP status code: " .. statusCode)
                 if statusCode ~= 200 then
-                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode .. ' ' .. (http:getError() or '')
+                    local msg = "Puzzle failed  " .. fileName .. ": " .. statusCode .. ' ' .. httpErrorMsg(statusCode)
                     print(msg)
                     table.insert(log, msg)
                     return
@@ -111,7 +126,6 @@ function downoadPuzzle(entry, puzDate)
                 local bytesRead, bytesTotal = http:getProgress()
                 print("Download progress: " .. bytesRead .. "/" .. bytesTotal .. ' bytes')
                 http:setReadTimeout(20)
-                -- local data = http:read(bytesTotal)
                 local data = readHttpResponse(http, bytesTotal, 20)
                 http:close()
                 local filePath = buildPuzzlePath(entry.folder, fileName, puzDate, true)
@@ -123,6 +137,8 @@ function downoadPuzzle(entry, puzDate)
                     local reason = ''
                     if statusCode == 200 then
                         reason = ' (timeout)'
+                    else
+                        reason = httpErrorMsg(statusCode)
                     end
                     local msg = "Failed to download puzzle " .. fileName .. ": " .. statusCode .. reason
                     print(msg)
