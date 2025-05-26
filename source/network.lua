@@ -39,6 +39,33 @@ local function parseUrl(url)
     return port, useSSL, host, path
 end
 
+local function readHttpResponse(http, bytesTotal, timeout)
+    local data = ''
+    local timeStarted = pd.getSecondsSinceEpoch()
+    timeout = timeout or 20
+    local timeExpired = timeStarted + timeout
+    while #data < bytesTotal do
+        if pd.getSecondsSinceEpoch() > timeExpired then
+            print("Timeout while reading HTTP response")
+            return nil, "Timeout"
+        end
+        local bytesAvail = http:getBytesAvailable()
+        if bytesAvail > 0 then
+            local chunk = http:read(bytesAvail)
+            if chunk then
+                data = data .. chunk
+            else
+                print("Error reading data from HTTP response")
+                return nil, "Error reading data"
+            end
+        else
+            coroutine.yield()
+        end
+    end
+
+    return data
+end
+
 -- Download a puzzle file if it doesn't already exist.
 function downoadPuzzle(entry, puzDate)
     local fileName = formatDateTime(puzDate, entry.fileName)
@@ -61,8 +88,6 @@ function downoadPuzzle(entry, puzDate)
         local http = pd.network.http.new(host, port, useSSL, 'Download Puzzles')
         if http then
             http:setConnectTimeout(20)
---          setReadBufferSize causing crash under 2.7.3
---            http:setReadBufferSize(8192)
             local headers = {}
             if entry.headers then
                 for s in string.gmatch(entry.headers, '([^^]+)') do
@@ -86,7 +111,8 @@ function downoadPuzzle(entry, puzDate)
                 local bytesRead, bytesTotal = http:getProgress()
                 print("Download progress: " .. bytesRead .. "/" .. bytesTotal .. ' bytes')
                 http:setReadTimeout(20)
-                local data = http:read(bytesTotal)
+                -- local data = http:read(bytesTotal)
+                local data = readHttpResponse(http, bytesTotal, 20)
                 http:close()
                 local filePath = buildPuzzlePath(entry.folder, fileName, puzDate, true)
                 if data and #data == bytesTotal then
