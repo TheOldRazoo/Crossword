@@ -108,7 +108,7 @@ sets up downloads for the following free puzzle sites:
 
 The configuration file may be editied to enable/disable any of the existing download sites or add new ones.
 This file is a JSON file which represents an array of tables where each array entry is a single download
-site.  The format of each download site consists of the fillowing entries:
+site.  The format of each download site consists of the following entries:
 
         active:         If true the site will be processed otherwise it is ignored.
         fileName:       The filename the puzzle will be stored under.
@@ -121,7 +121,7 @@ site.  The format of each download site consists of the fillowing entries:
         dayOfWeek:      An array of seven boolean entries indicating the days of the week
                         when the puzzle is available for download.  The first entry represents
                         Monday.
-        headers:        A string containing any HTTP headers that should be attahced to the
+        headers:        A string containing any HTTP headers that should be attached to the
                         GET request for the puzzle data.  This string is of the format:
                                 hdr1: value1^hdr2: value2^hdr3: value3
                         Each header is seperated by a caret (^) delimiter.  Headers are
@@ -157,11 +157,11 @@ Following is an example entry for the Wall Street Journal site:
 		"url":"https://herbach.dnsalias.com/wsj/wsj@year2@@month@@day@.puz"
 	}
 
-Selecting a puzle download displays a calendar where the date of the download can be selected.  Initially
+Selecting a puzzle download displays a calendar where the date of the download can be selected.  Initially
 the current date is selected but this can be changed using right/left on the D-Pad.  The Up/Down buttons
 will move to the previous/next month.
 When the appropiate date is selected, press the A button to initiate the download or the B button to exit
-without dlownloading.
+without downloading.
 
 The calendar generation code being used is a slightly modified version of a release by Guilherme Brisson.
         https://github.com/guiBrisson/lua-calendar
