@@ -39,16 +39,15 @@ Also an "exit puzzle" option will return to the Puzzle Selection Screen.  The
 current state of the puzzle is saved when the Play screen is exited and is
 restored on reentry to that puzzle.
 
-Crossword comes with 3 puzzles built into the app.  These are as follows and since
+Crossword comes with 2 puzzles built into the app.  These are as follows and since
 they are part of the executable they cannot be deleted.
 
 Mostly Musical Mini 23.puz
 1481WhyBeCross.puz
 
 Puzzle files that you download must be placed in the puzzle directory of the
-Crossword app.  Unfortunately, at present, the only way to do this is by connecting
-the Playdate to a computer via USB.  Once the Playdate is connected to your PC/Mac
-if it does not appear as a drive then on the Playdate system menu select the following:
+Crossword app.  Once the Playdate is connected to your PC/Mac if it does not appear
+as a drive then on the Playdate system menu select the following:
 
 settings -> System -> Reboot to Data Disk
 
@@ -69,12 +68,7 @@ Panic's instructions for sideloading games can be found here:
 https://help.play.date/games/sideloading/
 
 This app will only work with valid Across Lite puzzle files.  These files contain
-internal checksums used to validate the integrity of the file.  I've found that a
-number of these files don't seem to calculate the checksum correctly even though
-the file is fine and perfectly playable.  As a result I've disabled validation of
-the checksum in the hopes that the maximum number of files will be available for
-you to play.  If this proves to be a problem for folks I will issue a new version
-the reinstates the checksum validation.  In that case files with bad checksums
+internal checksums used to validate the integrity of the file.  Files with bad checksums
 will refuse to open.
 
 Playing background music
