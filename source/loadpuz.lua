@@ -378,7 +378,7 @@ function findFirstWord(puz, across)
 end
 
 function findWord(puz, row, col, across)
-local startRowCol, endRowCol
+    local startRowCol, endRowCol
     if across then
         startRowCol, endRowCol = findAcrossWord(puz, row, col)
     else
@@ -403,6 +403,10 @@ function findAcrossWord(puz, row, col)
         local c = col
         while true do
             c -= 1
+            if c < 1 then
+                break
+            end
+
             if needsAcrossNumber(puz, row, c) then
                 startRowCol = fromRowCol(row, c)
                 break
@@ -446,6 +450,10 @@ function findDownWord(puz, row, col)
         local r = row
         while true do
             r -= 1
+            if r < 1 then
+                break
+            end
+
             if needsDownNumber(puz, r, col) then
                 startRowCol = fromRowCol(r, col)
                 break
