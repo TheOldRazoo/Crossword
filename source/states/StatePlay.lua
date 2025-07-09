@@ -77,6 +77,10 @@ function StatePlay:update()
             ignoreB = false
         else
             self.across = not self.across
+            if not isWordLetterCell(self.puz, self.curRow, self.curCol, self.across) then
+                self.curRow, self.curCol, self.across =
+                        findNextWord(self.puz, self.curRow, self.curCol, self.across)
+            end
             self:displayCurrentCell(true)
         end
     elseif pd.buttonJustReleased(pd.kButtonRight) then
