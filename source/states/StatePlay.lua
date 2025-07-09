@@ -93,7 +93,7 @@ function StatePlay:update()
             ignoreB = false
             drawCell(self.puz, self.curRow, self.curCol)
             self.curCol += 1
-            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+            if not isWordLetterCell(self.puz, self.curRow, self.curCol, self.across) then
                 self.curRow, self.curCol, self.across =
                         findNextWord(self.puz, self.curRow, self.curCol, self.across)
             end
@@ -114,7 +114,7 @@ function StatePlay:update()
             ignoreB = false
             drawCell(self.puz, self.curRow, self.curCol)
             self.curCol -= 1
-            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+            if not isWordLetterCell(self.puz, self.curRow, self.curCol, self.across) then
                 self.curRow, self.curCol, self.across =
                         findPrevWord(self.puz, self.curRow, self.curCol, self.across)
                 local startRowCol, endRowCol = findWord(self.puz, self.curRow, self.curCol, self.across)
@@ -130,7 +130,7 @@ function StatePlay:update()
         else
             drawCell(self.puz, self.curRow, self.curCol)
             local row = self.curRow + 1
-            while not isLetterCell(self.puz, row, self.curCol) do
+            while not isWordLetterCell(self.puz, row, self.curCol, self.across) do
                 if row == self.curRow then
                     row += 1
                     break
@@ -143,7 +143,7 @@ function StatePlay:update()
             end
 
             self.curRow = row
-            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+            if not isWordLetterCell(self.puz, self.curRow, self.curCol, self.across) then
                 self.curRow, self.curCol, self.across =
                     findNextWord(self.puz, self.curRow, self.curCol, self.across)
             end
@@ -157,7 +157,7 @@ function StatePlay:update()
         else
             drawCell(self.puz, self.curRow, self.curCol)
             local row = self.curRow - 1
-            while not isLetterCell(self.puz, row, self.curCol) do
+            while not isWordLetterCell(self.puz, row, self.curCol, self.across) do
                 if row == self.curRow then
                     row -= 1
                     break
@@ -170,7 +170,7 @@ function StatePlay:update()
             end
 
             self.curRow = row
-            if not isLetterCell(self.puz, self.curRow, self.curCol) then
+            if not isWordLetterCell(self.puz, self.curRow, self.curCol, self.across) then
                 self.curRow, self.curCol, self.across =
                     findPrevWord(self.puz, self.curRow, self.curCol, self.across)
             end

@@ -378,7 +378,7 @@ function findFirstWord(puz, across)
 end
 
 function findWord(puz, row, col, across)
-    local startRowCol, endRowCol
+    local startRowCol, endRowCol = nil, nil
     if across then
         startRowCol, endRowCol = findAcrossWord(puz, row, col)
     else
@@ -488,6 +488,15 @@ function isLetterCell(puz, row, col)
     end
 
     return puz.grid[row][col] ~= '.'
+end
+
+function isWordLetterCell(puz, row, col, across)
+    if not isLetterCell(puz, row, col) then
+        return false
+    end
+
+    local startRowCol, endRowCol = findWord(puz, row, col, across)
+    return startRowCol ~= nil
 end
 
 function findNextWord(puz, row, col, across)
