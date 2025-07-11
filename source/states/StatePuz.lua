@@ -21,6 +21,7 @@ local puzzleInfoWidth = 400 - puzzleInfoX
 local puzzleInfoHeight = 224 - puzzleInfoY
 local puzzleInfoLineHeight = 14
 local font = getListFont()
+local fontHalved = getListFontHalved()
 local fontHeight = font:getHeight()
 local gridView = grid.new(gridWidth, font:getHeight() + 4)
 local displayGridView = false
@@ -199,6 +200,7 @@ end
 
 function gridView:drawCell(section, row, col, selected, x, y, width, height)
     local c, b
+    local cellFont = fontHalved
     if selected then
         gfx.setImageDrawMode(gfx.kDrawModeInverted)
         b = color
@@ -209,11 +211,15 @@ function gridView:drawCell(section, row, col, selected, x, y, width, height)
         c = color
     end
 
+    if pd.file.isdir(puzFiles[row]) or pd.file.exists(getSaveFileName(puzFiles[row]) .. '.json') then
+        cellFont = font
+    end
+
     gfx.setColor(b)
     gfx.fillRect(x, y, width, height)
     gfx.setColor(c)
     gfx.setBackgroundColor(b)
-    font:drawText(getBaseFileName(puzFiles[row]), x + 4, y + 2)
+    cellFont:drawText(getBaseFileName(puzFiles[row]), x + 4, y + 2)
     gfx.setColor(color)
     gfx.setBackgroundColor(backgroundColor)
 end
